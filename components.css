@@ -1,0 +1,461 @@
+/*
+ * ╔══════════════════════════════════════════════════════════════╗
+ * ║  components.css — Componentes Reutilizáveis de UI           ║
+ * ║                                                              ║
+ * ║  Peças de interface que aparecem em múltiplos contextos:     ║
+ * ║    Botões primário, secundário e de post                     ║
+ * ║    Avatares (pequeno e grande)                               ║
+ * ║    Contador de caracteres                                    ║
+ * ║    Modal de edição de post                                   ║
+ * ║    Toast de notificação                                      ║
+ * ║    Lightbox de imagem                                        ║
+ * ║    Estado vazio (empty state)                                ║
+ * ╚══════════════════════════════════════════════════════════════╝
+ */
+
+
+/* ══════════════════════════════════════════════
+   BOTÕES
+══════════════════════════════════════════════ */
+
+/*
+  btn-primary: ação principal (Salvar, Publicar…)
+  Fundo no acento com sombra colorida.
+*/
+.btn-primary {
+  padding: 9px 22px;
+  border-radius: var(--r-pill);
+  background: var(--accent);
+  color: #fff;
+  font-weight: 700;
+  font-size: .85rem;
+  transition: background var(--t), transform var(--t), box-shadow var(--t);
+  box-shadow: 0 2px 8px rgba(37,80,232,.28);
+}
+
+.btn-primary:hover {
+  background: var(--accent-h);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(37,80,232,.38);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+/*
+  btn-secondary: ação secundária (Cancelar…)
+  Borda sutil, sem fundo.
+*/
+.btn-secondary {
+  padding: 9px 18px;
+  border-radius: var(--r-pill);
+  border: 1.5px solid var(--border-2);
+  color: var(--ink-2);
+  font-size: .85rem;
+  font-weight: 500;
+  transition: background var(--t), border-color var(--t);
+}
+
+.btn-secondary:hover {
+  background: var(--bg-2);
+  border-color: var(--ink-3);
+}
+
+/*
+  btn-post: botão "Publicar" dentro do compose box
+  Variação compacta do btn-primary com ícone inline.
+*/
+.btn-post {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 20px;
+  border-radius: var(--r-pill);
+  background: var(--accent);
+  color: #fff;
+  font-weight: 700;
+  font-size: .85rem;
+  transition: background var(--t), transform var(--t), box-shadow var(--t);
+  box-shadow: 0 2px 8px rgba(37,80,232,.28);
+  white-space: nowrap;
+}
+
+.btn-post:hover {
+  background: var(--accent-h);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(37,80,232,.38);
+}
+
+.btn-post:active {
+  transform: translateY(0);
+}
+
+/* Desabilitado: sem cursor e opacidade reduzida */
+.btn-post:disabled {
+  opacity: .4;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/*
+  btn-edit-p: botão "Editar perfil" no hero do perfil
+  Apenas borda; ativo no hover do acento.
+*/
+.btn-edit-p {
+  padding: 8px 18px;
+  border-radius: var(--r-pill);
+  border: 1.5px solid var(--border-2);
+  color: var(--ink-2);
+  font-weight: 600;
+  font-size: .82rem;
+  transition: border-color var(--t), color var(--t), background var(--t);
+  white-space: nowrap;
+}
+
+.btn-edit-p:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-bg);
+}
+
+
+/* ══════════════════════════════════════════════
+   AVATARES PEQUENOS
+   Usados no compose e nos posts do feed.
+   Exibem iniciais do nome ou uma foto (img dentro).
+══════════════════════════════════════════════ */
+.post-ava,
+.compose-ava {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: var(--ink);
+  color: #fff;
+  font-weight: 700;
+  font-size: .78rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;           /* não encolhe em flex */
+  overflow: hidden;
+  border: 2px solid var(--border);
+  transition: border-color var(--t), box-shadow var(--t);
+  cursor: pointer;
+  user-select: none;
+}
+
+/* Quando contém uma foto: a imagem preenche todo o círculo */
+.post-ava img,
+.compose-ava img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.compose-ava:hover {
+  border-color: var(--accent);
+}
+
+
+/* ══════════════════════════════════════════════
+   CONTADOR DE CARACTERES
+   Muda de cor conforme o limite se aproxima.
+══════════════════════════════════════════════ */
+.char-counter {
+  font-size: .73rem;
+  color: var(--ink-3);
+  min-width: 28px;
+  text-align: right;
+  transition: color var(--t);
+}
+
+/* Aviso: ≤ 80 caracteres restantes */
+.char-counter.warn {
+  color: var(--warn);
+  font-weight: 600;
+}
+
+/* Perigo: ≤ 20 caracteres restantes */
+.char-counter.danger {
+  color: var(--danger);
+  font-weight: 700;
+}
+
+
+/* ══════════════════════════════════════════════
+   MODAL DE EDIÇÃO DE POST
+   Backdrop com blur + card centralizado.
+══════════════════════════════════════════════ */
+
+/* Fundo escurecido com blur */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;                               /* cobre tela toda */
+  background: rgba(28, 26, 23, .55);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  z-index: 500;                           /* acima de tudo exceto toasts */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  animation: fadeIn .15s ease;
+}
+
+/* Card do modal */
+.modal {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-xl);
+  width: 100%;
+  max-width: 520px;
+  box-shadow: var(--sh-lg);
+  animation: slideUp .25s cubic-bezier(.34, 1.56, .64, 1);
+}
+
+/* Cabeçalho: título + botão fechar */
+.modal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 22px;
+  border-bottom: 1px solid var(--border);
+}
+
+.modal-head h3 {
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+/* Botão ✕ para fechar o modal */
+.modal-close-btn {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink-3);
+  font-size: .85rem;
+  transition: background var(--t), color var(--t);
+}
+
+.modal-close-btn:hover {
+  background: var(--bg-2);
+  color: var(--ink);
+}
+
+/* Textarea de edição */
+.modal-ta {
+  width: 100%;
+  padding: 16px 22px;
+  font-family: var(--font-body);
+  font-size: .95rem;
+  line-height: 1.65;
+  color: var(--ink);
+  background: transparent;
+  min-height: 120px;
+}
+
+/* Rodapé: contador + botões */
+.modal-foot {
+  padding: 12px 22px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.modal-actions {
+  display: flex;
+  gap: var(--sp-sm);
+}
+
+
+/* ══════════════════════════════════════════════
+   TOAST — Notificação temporária flutuante
+   Posicionado na parte inferior da tela.
+   Aparece/desaparece com classes .show .ok .err.
+══════════════════════════════════════════════ */
+.toast {
+  position: fixed;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%) translateY(16px);  /* começa levemente abaixo */
+  background: var(--ink);
+  color: #fff;
+  padding: 11px 24px;
+  border-radius: var(--r-pill);
+  font-size: .84rem;
+  font-weight: 600;
+  z-index: 900;                 /* acima de tudo */
+  opacity: 0;
+  white-space: nowrap;
+  box-shadow: var(--sh-lg);
+  transition: opacity .22s ease, transform .22s ease;
+  pointer-events: none;         /* não bloqueia cliques quando invisível */
+}
+
+/* Estado visível */
+.toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* Variante sucesso (verde) */
+.toast.ok {
+  background: var(--success);
+}
+
+/* Variante erro (vermelho) */
+.toast.err {
+  background: var(--danger);
+}
+
+/* Em mobile: sobe acima da bottom-bar */
+@media (max-width: 640px) {
+  .toast {
+    bottom: calc(var(--bottom-bar-h) + 16px);
+  }
+}
+
+
+/* ══════════════════════════════════════════════
+   LIGHTBOX — Visualizador de imagem em tela cheia
+══════════════════════════════════════════════ */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, .9);
+  z-index: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  cursor: zoom-out;
+  animation: fadeIn .18s ease;
+}
+
+.lightbox img {
+  max-width: min(90vw, 900px);
+  max-height: 90vh;
+  border-radius: var(--r-md);
+  object-fit: contain;           /* não corta a imagem */
+  box-shadow: var(--sh-lg);
+  cursor: default;
+}
+
+/* Botão de fechar no canto superior direito */
+.lightbox-close {
+  position: fixed;
+  top: 18px;
+  right: 18px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, .15);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: .9rem;
+  transition: background var(--t);
+  z-index: 801;
+}
+
+.lightbox-close:hover {
+  background: rgba(255, 255, 255, .28);
+}
+
+
+/* ══════════════════════════════════════════════
+   EMPTY STATE — mensagem quando não há conteúdo
+══════════════════════════════════════════════ */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 60px 20px;
+  gap: 10px;
+}
+
+.empty-ico {
+  font-size: 3rem;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.empty-state h3 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.empty-state p {
+  font-size: .88rem;
+  color: var(--ink-3);
+  max-width: 260px;
+}
+
+
+/* ══════════════════════════════════════════════
+   FORMULÁRIO DE EDIÇÃO (campos genéricos)
+   Usado na aba de perfil.
+══════════════════════════════════════════════ */
+.edit-form {
+  background: var(--surface);
+  border: 2px solid var(--accent);
+  border-radius: var(--r-xl);
+  padding: 24px;
+  box-shadow: var(--sh-lg);
+  animation: fadeUp .2s ease;
+}
+
+.edit-form h3 {
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+/* Par label + campo */
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+
+.form-field label {
+  font-size: .76rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--ink-3);
+}
+
+.form-field input,
+.form-field textarea {
+  background: var(--bg-2);
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-md);
+  padding: 10px 14px;
+  font-size: .9rem;
+  color: var(--ink);
+  transition: border-color var(--t), box-shadow var(--t);
+}
+
+.form-field input:focus,
+.form-field textarea:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(37,80,232,.1);
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--sp-sm);
+  margin-top: 8px;
+}

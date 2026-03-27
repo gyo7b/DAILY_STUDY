@@ -1,0 +1,109 @@
+/*
+ * ╔══════════════════════════════════════════════════════════════╗
+ * ║  variables.css — Design Tokens                              ║
+ * ║                                                              ║
+ * ║  Todas as variáveis CSS do projeto ficam aqui.              ║
+ * ║  Altere aqui para modificar cores, espaçamentos ou fontes   ║
+ * ║  em toda a aplicação de uma vez.                            ║
+ * ╚══════════════════════════════════════════════════════════════╝
+ */
+
+:root {
+
+  /* ──────────────────────────────────────────
+     PALETA DE CORES
+     Tema claro/quente inspirado em papel,
+     com acento azul intenso para ações primárias.
+  ────────────────────────────────────────── */
+
+  /* Fundo da página */
+  --bg:          #f4f2ee;    /* creme suave */
+  --bg-2:        #eceae5;    /* creme um pouco mais escuro (hover, inputs) */
+
+  /* Superfícies (cards, modais, compose) */
+  --surface:     #ffffff;
+
+  /* Bordas */
+  --border:      #e3e0d8;    /* borda padrão */
+  --border-2:    #ccc8be;    /* borda mais escura (hover, foco) */
+
+  /* Texto */
+  --ink:         #1c1a17;    /* texto principal */
+  --ink-2:       #57544e;    /* texto secundário */
+  --ink-3:       #9e9b95;    /* texto terciário / placeholders */
+
+  /* Acento (ações primárias) */
+  --accent:      #2550e8;
+  --accent-h:    #1840c4;    /* hover do acento */
+  --accent-bg:   #edf0fd;    /* fundo suave do acento */
+
+  /* Semânticas */
+  --danger:      #d43f3f;
+  --danger-bg:   rgba(212,63,63,.08);
+  --success:     #1f9966;
+  --warn:        #c47a18;
+
+
+  /* ──────────────────────────────────────────
+     TIPOGRAFIA
+  ────────────────────────────────────────── */
+
+  /* Outfit: sans-serif geométrica — UI, labels, botões, navegação */
+  --font-ui:     'Outfit', sans-serif;
+
+  /* Lora: serifada elegante — corpo das postagens */
+  --font-body:   'Lora', serif;
+
+
+  /* ──────────────────────────────────────────
+     ESPAÇAMENTOS
+     Usar estas variáveis para padding/gap/margin
+     mantém ritmo visual consistente.
+  ────────────────────────────────────────── */
+  --sp-xs:  4px;
+  --sp-sm:  8px;
+  --sp-md:  16px;
+  --sp-lg:  24px;
+  --sp-xl:  40px;
+
+
+  /* ──────────────────────────────────────────
+     BORDAS ARREDONDADAS
+  ────────────────────────────────────────── */
+  --r-xs:   4px;
+  --r-sm:   8px;
+  --r-md:   14px;
+  --r-lg:   22px;
+  --r-xl:   32px;
+  --r-pill: 999px;
+
+
+  /* ──────────────────────────────────────────
+     SOMBRAS
+  ────────────────────────────────────────── */
+  --sh:     0 1px 3px rgba(0,0,0,.05), 0 4px 12px rgba(0,0,0,.06);
+  --sh-lg:  0 4px 8px rgba(0,0,0,.04), 0 16px 48px rgba(0,0,0,.10);
+
+
+  /* ──────────────────────────────────────────
+     LAYOUT
+  ────────────────────────────────────────── */
+
+  /* Largura da rail lateral de navegação */
+  --sidebar-w:   76px;
+
+  /* Largura máxima da coluna central de conteúdo */
+  --content-max: 640px;
+
+  /* Altura da barra inferior mobile */
+  --bottom-bar-h: 58px;
+
+
+  /* ──────────────────────────────────────────
+     TRANSIÇÕES
+     Usar --t para transições padrão de hover/foco.
+  ────────────────────────────────────────── */
+  --t:      .18s ease;
+  --t-slow: .35s ease;
+
+}

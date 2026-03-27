@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (emailDigitado === emailSalvo && senhaDigitada === senhaSalva) {
             // Sucesso
             localStorage.setItem('isAuthenticated', 'true');
-            window.location.href = 'dashboard.html';
+            window.location.href = '/daily-study-v2.html';
         } else {
             // Falha
             mensagemErro.textContent = 'E-mail ou senha incorretos.';

@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Daily Study — Feed</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
+  <style>
+/* ===== variables.css ===== */
+:root {
+  --clr-bg:        #0e0f11;
+  --clr-surface:   #16181c;
+  --clr-surface-2: #1e2127;
+  --clr-border:    #2a2d35;
+  --clr-accent:    #f0c040;
+  --clr-accent-dim:#c49a28;
+  --clr-text:      #e8eaf0;
+  --clr-text-2:    #8b90a0;
+  --clr-text-3:    #555b6a;
+  --clr-danger:    #e05555;
+  --clr-success:   #4caf82;
+  --font-display:  'Syne', sans-serif;
+  --font-body:     'DM Sans', sans-serif;
+  --sp-xs: 4px; --sp-sm: 8px; --sp-md: 16px; --sp-lg: 24px; --sp-xl: 40px;
+  --radius-sm: 6px; --radius-md: 12px; --radius-lg: 18px; --radius-pill: 999px;
+  --shadow-card: 0 2px 12px rgba(0,0,0,0.35);
+  --shadow-modal: 0 8px 40px rgba(0,0,0,0.6);
+  --sidebar-w: 220px; --topbar-h: 56px;
+  --transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ===== reset.css ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 16px; scroll-behavior: smooth; }
+body { font-family: var(--font-body); background-color: var(--clr-bg); color: var(--clr-text); line-height: 1.6; min-height: 100vh; -webkit-font-smoothing: antialiased; }
+button { font-family: inherit; cursor: pointer; border: none; background: none; outline: none; }
+textarea, input { font-family: inherit; border: none; outline: none; resize: none; background: none; color: inherit; }
+ul, ol { list-style: none; }
+img { display: block; max-width: 100%; }
+.hidden { display: none !important; }
+
+/* ===== layout.css ===== */
+.sidebar { position: fixed; top: 0; left: 0; width: var(--sidebar-w); height: 100vh; background: var(--clr-surface); border-right: 1px solid var(--clr-border); display: flex; flex-direction: column; padding: var(--sp-lg) var(--sp-md); z-index: 100; }
+.topbar { display: none; position: fixed; top: 0; left: 0; right: 0; height: var(--topbar-h); background: var(--clr-surface); border-bottom: 1px solid var(--clr-border); align-items: center; justify-content: space-between; padding: 0 var(--sp-md); z-index: 100; }
+.main-content { margin-left: var(--sidebar-w); min-height: 100vh; max-width: 680px; padding: var(--sp-xl) var(--sp-lg); }
+.tab-panel { display: none; animation: fadeUp 0.3s ease forwards; }
+.tab-panel.active { display: block; }
+@media (max-width: 768px) {
+  .sidebar { display: none; }
+  .topbar { display: flex; }
+  .main-content { margin-left: 0; padding: calc(var(--topbar-h) + var(--sp-md)) var(--sp-md) var(--sp-xl); max-width: 100%; }
+}
+
+/* ===== components.css ===== */
+.sidebar__logo { display: flex; align-items: center; gap: var(--sp-sm); margin-bottom: var(--sp-xl); }
+.logo-mark { font-family: var(--font-display); font-weight: 800; font-size: 1rem; background: var(--clr-accent); color: #0e0f11; padding: 4px 8px; border-radius: var(--radius-sm); letter-spacing: 0.05em; }
+.logo-text { font-family: var(--font-display); font-weight: 700; font-size: 1rem; color: var(--clr-text); }
+.sidebar__nav { display: flex; flex-direction: column; gap: var(--sp-xs); flex: 1; }
+.nav-item { display: flex; align-items: center; gap: var(--sp-sm); padding: 10px var(--sp-md); border-radius: var(--radius-md); color: var(--clr-text-2); font-size: 0.9rem; font-weight: 500; transition: background var(--transition), color var(--transition); }
+.nav-item:hover { background: var(--clr-surface-2); color: var(--clr-text); }
+.nav-item.active { background: var(--clr-accent); color: #0e0f11; }
+.sidebar__user { display: flex; align-items: center; gap: var(--sp-sm); padding: var(--sp-md); border-radius: var(--radius-md); background: var(--clr-surface-2); }
+.user-avatar { width: 36px; height: 36px; border-radius: var(--radius-pill); background: var(--clr-accent); color: #0e0f11; font-family: var(--font-display); font-weight: 700; font-size: 0.75rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.user-info { display: flex; flex-direction: column; overflow: hidden; }
+.user-name { font-size: 0.82rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.user-role { font-size: 0.72rem; color: var(--clr-text-3); }
+.topbar__tabs { display: flex; gap: var(--sp-xs); }
+.tab-btn { padding: 6px var(--sp-md); border-radius: var(--radius-pill); font-size: 0.85rem; font-weight: 500; color: var(--clr-text-2); transition: background var(--transition), color var(--transition); }
+.tab-btn.active { background: var(--clr-accent); color: #0e0f11; font-weight: 700; }
+.btn-publish { display: flex; align-items: center; gap: 6px; padding: 8px var(--sp-md); background: var(--clr-accent); color: #0e0f11; font-family: var(--font-display); font-weight: 700; font-size: 0.85rem; border-radius: var(--radius-pill); transition: background var(--transition), transform var(--transition); }
+.btn-publish:hover { background: var(--clr-accent-dim); transform: translateY(-1px); }
+.btn-publish:active { transform: translateY(0); }
+.btn-publish:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+.btn-cancel { padding: 8px var(--sp-md); border-radius: var(--radius-pill); font-size: 0.85rem; color: var(--clr-text-2); border: 1px solid var(--clr-border); transition: background var(--transition); }
+.btn-cancel:hover { background: var(--clr-surface-2); }
+.btn-save { padding: 8px var(--sp-md); background: var(--clr-accent); color: #0e0f11; font-family: var(--font-display); font-weight: 700; font-size: 0.85rem; border-radius: var(--radius-pill); transition: background var(--transition); }
+.btn-save:hover { background: var(--clr-accent-dim); }
+.char-counter { font-size: 0.75rem; color: var(--clr-text-3); }
+.char-counter.warning { color: #e0a040; }
+.char-counter.danger  { color: var(--clr-danger); }
+.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.65); backdrop-filter: blur(4px); z-index: 500; display: flex; align-items: center; justify-content: center; padding: var(--sp-md); animation: fadeIn 0.15s ease; }
+.modal { background: var(--clr-surface); border: 1px solid var(--clr-border); border-radius: var(--radius-lg); width: 100%; max-width: 520px; box-shadow: var(--shadow-modal); animation: slideUp 0.25s cubic-bezier(0.34, 1.56, 0.64, 1); }
+.modal-header { display: flex; align-items: center; justify-content: space-between; padding: var(--sp-md) var(--sp-lg); border-bottom: 1px solid var(--clr-border); }
+.modal-header h3 { font-family: var(--font-display); font-weight: 700; font-size: 1rem; }
+.modal-close { color: var(--clr-text-2); font-size: 0.9rem; width: 28px; height: 28px; border-radius: var(--radius-pill); display: flex; align-items: center; justify-content: center; transition: background var(--transition), color var(--transition); }
+.modal-close:hover { background: var(--clr-surface-2); color: var(--clr-text); }
+.modal-textarea { width: 100%; padding: var(--sp-md) var(--sp-lg); font-size: 0.95rem; color: var(--clr-text); background: transparent; resize: none; line-height: 1.6; }
+.modal-footer { padding: var(--sp-sm) var(--sp-lg) var(--sp-md); display: flex; align-items: center; justify-content: space-between; border-top: 1px solid var(--clr-border); }
+.modal-actions { display: flex; gap: var(--sp-sm); }
+.toast { position: fixed; bottom: var(--sp-lg); left: 50%; transform: translateX(-50%) translateY(20px); background: var(--clr-surface-2); border: 1px solid var(--clr-border); color: var(--clr-text); padding: 10px var(--sp-lg); border-radius: var(--radius-pill); font-size: 0.85rem; font-weight: 500; z-index: 900; opacity: 0; transition: opacity 0.25s, transform 0.25s; white-space: nowrap; box-shadow: var(--shadow-modal); }
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+.toast.success { border-color: var(--clr-success); color: var(--clr-success); }
+.toast.error   { border-color: var(--clr-danger);  color: var(--clr-danger); }
+.empty-state { text-align: center; padding: var(--sp-xl) 0; color: var(--clr-text-3); }
+.empty-icon { font-size: 2.5rem; margin-bottom: var(--sp-md); }
+.empty-state p { font-size: 1rem; font-weight: 500; color: var(--clr-text-2); }
+.empty-state span { font-size: 0.85rem; }
+
+/* ===== feed.css ===== */
+.feed-header { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: var(--sp-lg); }
+.feed-title { font-family: var(--font-display); font-weight: 800; font-size: 1.6rem; letter-spacing: -0.02em; }
+.post-count { font-size: 0.8rem; color: var(--clr-text-3); font-weight: 400; }
+.compose-box { display: flex; gap: var(--sp-md); background: var(--clr-surface); border: 1px solid var(--clr-border); border-radius: var(--radius-lg); padding: var(--sp-md); margin-bottom: var(--sp-lg); transition: border-color var(--transition), box-shadow var(--transition); }
+.compose-box:focus-within { border-color: var(--clr-accent); box-shadow: 0 0 0 3px rgba(240,192,64,0.1); }
+.compose-avatar { width: 40px; height: 40px; border-radius: var(--radius-pill); background: var(--clr-accent); color: #0e0f11; font-family: var(--font-display); font-weight: 700; font-size: 0.8rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px; }
+.compose-right { flex: 1; display: flex; flex-direction: column; gap: var(--sp-sm); }
+.compose-textarea { width: 100%; font-size: 0.95rem; color: var(--clr-text); background: transparent; resize: none; line-height: 1.6; }
+.compose-textarea::placeholder { color: var(--clr-text-3); }
+.compose-footer { display: flex; align-items: center; justify-content: space-between; }
+.posts-feed { display: flex; flex-direction: column; gap: var(--sp-md); }
+.post-card { background: var(--clr-surface); border: 1px solid var(--clr-border); border-radius: var(--radius-lg); padding: var(--sp-md) var(--sp-lg); transition: border-color var(--transition); animation: fadeUp 0.3s ease forwards; }
+.post-card:hover { border-color: var(--clr-surface-2); }
+.post-card__header { display: flex; align-items: center; gap: var(--sp-sm); margin-bottom: var(--sp-sm); }
+.post-avatar { width: 36px; height: 36px; border-radius: var(--radius-pill); background: var(--clr-accent); color: #0e0f11; font-family: var(--font-display); font-weight: 700; font-size: 0.72rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.post-meta { flex: 1; }
+.post-author { font-family: var(--font-display); font-weight: 600; font-size: 0.9rem; }
+.post-date { font-size: 0.75rem; color: var(--clr-text-3); }
+.post-actions { display: flex; gap: var(--sp-xs); opacity: 0; transition: opacity var(--transition); }
+.post-card:hover .post-actions { opacity: 1; }
+.post-action-btn { width: 30px; height: 30px; border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; color: var(--clr-text-3); transition: background var(--transition), color var(--transition); }
+.post-action-btn:hover { background: var(--clr-surface-2); color: var(--clr-text); }
+.post-action-btn.delete:hover { background: rgba(224,85,85,0.1); color: var(--clr-danger); }
+.post-card__body { font-size: 0.92rem; color: var(--clr-text); line-height: 1.65; white-space: pre-wrap; word-break: break-word; }
+.post-edited-tag { font-size: 0.72rem; color: var(--clr-text-3); margin-top: var(--sp-sm); font-style: italic; }
+
+/* ===== profile.css ===== */
+.profile-card { background: var(--clr-surface); border: 1px solid var(--clr-border); border-radius: var(--radius-lg); overflow: hidden; margin-bottom: var(--sp-lg); }
+.profile-cover { height: 100px; background: linear-gradient(135deg, #1e2127 0%, #2a2d35 50%, #1a1c20 100%); position: relative; }
+.profile-cover::after { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(45deg, transparent, transparent 20px, rgba(240,192,64,0.04) 20px, rgba(240,192,64,0.04) 21px); }
+.profile-body { padding: var(--sp-md) var(--sp-lg) var(--sp-lg); position: relative; }
+.profile-avatar-wrap { margin-top: -30px; margin-bottom: var(--sp-md); }
+.profile-avatar { width: 64px; height: 64px; border-radius: var(--radius-pill); background: var(--clr-accent); color: #0e0f11; font-family: var(--font-display); font-weight: 800; font-size: 1.2rem; display: flex; align-items: center; justify-content: center; border: 3px solid var(--clr-bg); }
+.profile-info { margin-bottom: var(--sp-md); }
+.profile-name { font-family: var(--font-display); font-weight: 800; font-size: 1.3rem; letter-spacing: -0.01em; margin-bottom: 2px; }
+.profile-role { font-size: 0.8rem; color: var(--clr-text-3); margin-bottom: var(--sp-sm); }
+.profile-bio { font-size: 0.9rem; color: var(--clr-text-2); line-height: 1.55; }
+.btn-edit-profile { padding: 8px var(--sp-md); border-radius: var(--radius-pill); border: 1px solid var(--clr-border); font-size: 0.82rem; font-weight: 600; color: var(--clr-text-2); transition: border-color var(--transition), background var(--transition), color var(--transition); }
+.btn-edit-profile:hover { border-color: var(--clr-accent); color: var(--clr-accent); }
+.edit-profile-form { background: var(--clr-surface); border: 1px solid var(--clr-accent); border-radius: var(--radius-lg); padding: var(--sp-lg); margin-bottom: var(--sp-lg); animation: fadeUp 0.2s ease; }
+.edit-profile-form h3 { font-family: var(--font-display); font-weight: 700; font-size: 1rem; margin-bottom: var(--sp-md); }
+.edit-profile-form label { display: flex; flex-direction: column; gap: var(--sp-xs); font-size: 0.8rem; font-weight: 500; color: var(--clr-text-2); margin-bottom: var(--sp-md); }
+.edit-profile-form input, .edit-profile-form textarea { background: var(--clr-surface-2); border: 1px solid var(--clr-border); border-radius: var(--radius-sm); padding: var(--sp-sm) var(--sp-md); font-size: 0.9rem; color: var(--clr-text); transition: border-color var(--transition); }
+.edit-profile-form input:focus, .edit-profile-form textarea:focus { border-color: var(--clr-accent); }
+.edit-actions { display: flex; justify-content: flex-end; gap: var(--sp-sm); margin-top: var(--sp-md); }
+.profile-stats { display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-md); margin-bottom: var(--sp-lg); }
+.stat-card { background: var(--clr-surface); border: 1px solid var(--clr-border); border-radius: var(--radius-md); padding: var(--sp-md) var(--sp-lg); display: flex; flex-direction: column; gap: 4px; }
+.stat-number { font-family: var(--font-display); font-weight: 800; font-size: 2rem; color: var(--clr-accent); letter-spacing: -0.03em; }
+.stat-label { font-size: 0.78rem; color: var(--clr-text-3); }
+.profile-posts { display: flex; flex-direction: column; gap: var(--sp-md); }
+.section-title { font-family: var(--font-display); font-weight: 700; color: var(--clr-text-2); letter-spacing: 0.02em; text-transform: uppercase; font-size: 0.8rem; }
+#profilePostsFeed { display: flex; flex-direction: column; gap: var(--sp-md); margin-top: var(--sp-sm); }
+
+/* ===== animations.css ===== */
+@keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes slideUp { from { opacity: 0; transform: translateY(20px) scale(0.97); } to { opacity: 1; transform: translateY(0) scale(1); } }
+.post-card:nth-child(1) { animation-delay: 0ms; }
+.post-card:nth-child(2) { animation-delay: 40ms; }
+.post-card:nth-child(3) { animation-delay: 80ms; }
+.post-card:nth-child(4) { animation-delay: 120ms; }
+.post-card:nth-child(5) { animation-delay: 160ms; }
+  </style>
+</head>
+<body>
+
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar__logo">
+      <span class="logo-mark">DS</span>
+      <span class="logo-text">Daily Study</span>
+    </div>
+    <nav class="sidebar__nav">
+      <button class="nav-item active" data-tab="feed" aria-label="Feed">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+        <span>Feed</span>
+      </button>
+      <button class="nav-item" data-tab="profile" aria-label="Perfil">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <span>Perfil</span>
+      </button>
+    </nav>
+    <div class="sidebar__user">
+      <div class="user-avatar" id="sidebarAvatar">JD</div>
+      <div class="user-info">
+        <span class="user-name" id="sidebarName">João da Silva</span>
+        <span class="user-role">Estudante</span>
+      </div>
+    </div>
+  </aside>
+
+  <header class="topbar">
+    <span class="logo-mark">DS</span>
+    <div class="topbar__tabs">
+      <button class="tab-btn active" data-tab="feed">Feed</button>
+      <button class="tab-btn" data-tab="profile">Perfil</button>
+    </div>
+  </header>
+
+  <main class="main-content">
+    <section class="tab-panel active" id="tab-feed">
+      <div class="feed-header">
+        <h1 class="feed-title">Feed de Estudos</h1>
+        <span class="post-count" id="postCount">0 postagens</span>
+      </div>
+      <div class="compose-box" id="composeBox">
+        <div class="compose-avatar" id="composeAvatar">JD</div>
+        <div class="compose-right">
+          <textarea id="postInput" class="compose-textarea" placeholder="Compartilhe o que você está estudando hoje..." maxlength="500" rows="3"></textarea>
+          <div class="compose-footer">
+            <span class="char-counter" id="charCounter">500 caracteres restantes</span>
+            <button class="btn-publish" id="btnPublish">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+              Publicar
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="posts-feed" id="postsFeed"></div>
+      <div class="empty-state hidden" id="emptyState">
+        <div class="empty-icon">📚</div>
+        <p>Nenhuma postagem ainda.</p>
+        <span>Seja o primeiro a compartilhar algo!</span>
+      </div>
+    </section>
+
+    <section class="tab-panel" id="tab-profile">
+      <div class="profile-card">
+        <div class="profile-cover"></div>
+        <div class="profile-body">
+          <div class="profile-avatar-wrap">
+            <div class="profile-avatar" id="profileAvatar">JD</div>
+          </div>
+          <div class="profile-info">
+            <h2 class="profile-name" id="profileName">João da Silva</h2>
+            <p class="profile-role">Estudante · Daily Study</p>
+            <p class="profile-bio" id="profileBio">Apaixonado por aprender. Sempre estudando algo novo todos os dias.</p>
+          </div>
+          <button class="btn-edit-profile" id="btnEditProfile">Editar Perfil</button>
+        </div>
+      </div>
+      <div class="edit-profile-form hidden" id="editProfileForm">
+        <h3>Editar Perfil</h3>
+        <label>Nome<input type="text" id="editName" maxlength="50" placeholder="Seu nome" /></label>
+        <label>Biografia<textarea id="editBio" maxlength="200" rows="3" placeholder="Fale um pouco sobre você..."></textarea></label>
+        <div class="edit-actions">
+          <button class="btn-cancel" id="btnCancelEdit">Cancelar</button>
+          <button class="btn-save" id="btnSaveProfile">Salvar</button>
+        </div>
+      </div>
+      <div class="profile-stats">
+        <div class="stat-card"><span class="stat-number" id="statPosts">0</span><span class="stat-label">Postagens</span></div>
+        <div class="stat-card"><span class="stat-number" id="statDays">0</span><span class="stat-label">Dias ativos</span></div>
+      </div>
+      <div class="profile-posts">
+        <h3 class="section-title">Suas Postagens</h3>
+        <div id="profilePostsFeed"></div>
+        <div class="empty-state hidden" id="profileEmptyState">
+          <div class="empty-icon">✏️</div>
+          <p>Você ainda não publicou nada.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div class="modal-overlay hidden" id="modalOverlay">
+    <div class="modal" id="editModal" role="dialog" aria-modal="true">
+      <div class="modal-header">
+        <h3>Editar Postagem</h3>
+        <button class="modal-close" id="modalClose" aria-label="Fechar">✕</button>
+      </div>
+      <textarea id="editPostInput" class="modal-textarea" maxlength="500" rows="5"></textarea>
+      <div class="modal-footer">
+        <span class="char-counter" id="editCharCounter">500 caracteres restantes</span>
+        <div class="modal-actions">
+          <button class="btn-cancel" id="btnCancelModal">Cancelar</button>
+          <button class="btn-save" id="btnSaveEdit">Salvar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast hidden" id="toast" role="alert" aria-live="polite"></div>
+
+  <script>
+// ===== storage.js =====
+const Storage = (() => {
+  const KEYS = { POSTS: 'dailystudy_posts', PROFILE: 'dailystudy_profile' };
+  function getPosts() { try { const r = localStorage.getItem(KEYS.POSTS); return r ? JSON.parse(r) : []; } catch { return []; } }
+  function savePosts(p) { localStorage.setItem(KEYS.POSTS, JSON.stringify(p)); }
+  function addPost(text) { const posts = getPosts(); const post = { id: crypto.randomUUID(), text: text.trim(), createdAt: new Date().toISOString(), editedAt: null }; posts.unshift(post); savePosts(posts); return post; }
+  function editPost(id, newText) { const posts = getPosts(); const idx = posts.findIndex(p => p.id === id); if (idx === -1) return null; posts[idx].text = newText.trim(); posts[idx].editedAt = new Date().toISOString(); savePosts(posts); return posts[idx]; }
+  function deletePost(id) { savePosts(getPosts().filter(p => p.id !== id)); }
+  const DEFAULT_PROFILE = { name: 'João da Silva', bio: 'Apaixonado por aprender. Sempre estudando algo novo todos os dias.' };
+  function getProfile() { try { const r = localStorage.getItem(KEYS.PROFILE); return r ? JSON.parse(r) : { ...DEFAULT_PROFILE }; } catch { return { ...DEFAULT_PROFILE }; } }
+  function saveProfile(p) { localStorage.setItem(KEYS.PROFILE, JSON.stringify(p)); }
+  return { getPosts, addPost, editPost, deletePost, getProfile, saveProfile };
+})();
+
+// ===== profile.js =====
+const Profile = (() => {
+  function get() { return Storage.getProfile(); }
+  function syncUI() {
+    const p = get(); const i = getInitials(p.name);
+    setT('sidebarName', p.name); setT('sidebarAvatar', i);
+    setT('composeAvatar', i); setT('profileName', p.name);
+    setT('profileBio', p.bio); setT('profileAvatar', i);
+  }
+  function openEditForm() {
+    const p = get();
+    document.getElementById('editName').value = p.name;
+    document.getElementById('editBio').value  = p.bio;
+    document.getElementById('editProfileForm').classList.remove('hidden');
+    document.getElementById('btnEditProfile').style.display = 'none';
+    document.getElementById('editName').focus();
+  }
+  function closeEditForm() {
+    document.getElementById('editProfileForm').classList.add('hidden');
+    document.getElementById('btnEditProfile').style.display = '';
+  }
+  function save() {
+    const name = document.getElementById('editName').value.trim();
+    const bio  = document.getElementById('editBio').value.trim();
+    if (!name) { UI.showToast('O nome não pode estar vazio.', 'error'); return; }
+    Storage.saveProfile({ name, bio });
+    syncUI(); closeEditForm();
+    Posts.renderFeed(); Posts.renderProfilePosts();
+    UI.showToast('Perfil atualizado!', 'success');
+  }
+  function setT(id, text) { const el = document.getElementById(id); if (el) el.textContent = text; }
+  function getInitials(name) { const p = (name||'U').trim().split(' ').filter(Boolean); return p.length === 1 ? p[0][0].toUpperCase() : (p[0][0]+p[p.length-1][0]).toUpperCase(); }
+  return { get, syncUI, openEditForm, closeEditForm, save };
+})();
+
+// ===== posts.js =====
+const Posts = (() => {
+  let _editingId = null;
+  function formatDate(iso) {
+    const d = new Date(iso), now = new Date();
+    const t = d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+    if (d.toDateString() === now.toDateString()) return `Hoje às ${t}`;
+    const yest = new Date(now); yest.setDate(now.getDate()-1);
+    if (d.toDateString() === yest.toDateString()) return `Ontem às ${t}`;
+    return d.toLocaleDateString('pt-BR', { day: 'numeric', month: 'short' }) + ` às ${t}`;
+  }
+  function getInitials(name) { const p = (name||'U').trim().split(' ').filter(Boolean); return p.length === 1 ? p[0][0].toUpperCase() : (p[0][0]+p[p.length-1][0]).toUpperCase(); }
+  function escapeHTML(s) { const d = document.createElement('div'); d.appendChild(document.createTextNode(s)); return d.innerHTML; }
+  function createPostElement(post, initials) {
+    const a = document.createElement('article');
+    a.className = 'post-card'; a.dataset.id = post.id;
+    a.innerHTML = `
+      <div class="post-card__header">
+        <div class="post-avatar">${initials}</div>
+        <div class="post-meta">
+          <div class="post-author" data-author></div>
+          <div class="post-date">${formatDate(post.createdAt)}</div>
+        </div>
+        <div class="post-actions">
+          <button class="post-action-btn edit" data-action="edit" aria-label="Editar post">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          </button>
+          <button class="post-action-btn delete" data-action="delete" aria-label="Excluir post">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="post-card__body">${escapeHTML(post.text)}</div>
+      ${post.editedAt ? `<p class="post-edited-tag">editado ${formatDate(post.editedAt)}</p>` : ''}
+    `;
+    a.querySelector('[data-author]').textContent = Profile.get().name;
+    a.addEventListener('click', e => {
+      const btn = e.target.closest('[data-action]');
+      if (!btn) return;
+      if (btn.dataset.action === 'edit')   openEditModal(post.id, post.text);
+      if (btn.dataset.action === 'delete') handleDelete(post.id);
+    });
+    return a;
+  }
+  function renderFeed() {
+    const feedEl = document.getElementById('postsFeed');
+    const emptyEl = document.getElementById('emptyState');
+    const countEl = document.getElementById('postCount');
+    const posts = Storage.getPosts();
+    const initials = getInitials(Profile.get().name);
+    feedEl.innerHTML = '';
+    if (posts.length === 0) { emptyEl.classList.remove('hidden'); countEl.textContent = '0 postagens'; return; }
+    emptyEl.classList.add('hidden');
+    countEl.textContent = `${posts.length} postage${posts.length > 1 ? 'ns' : 'm'}`;
+    posts.forEach(p => feedEl.appendChild(createPostElement(p, initials)));
+  }
+  function renderProfilePosts() {
+    const container = document.getElementById('profilePostsFeed');
+    const emptyEl   = document.getElementById('profileEmptyState');
+    const posts     = Storage.getPosts();
+    const initials  = getInitials(Profile.get().name);
+    container.innerHTML = '';
+    if (posts.length === 0) { emptyEl.classList.remove('hidden'); return; }
+    emptyEl.classList.add('hidden');
+    posts.forEach(p => container.appendChild(createPostElement(p, initials)));
+  }
+  function handlePublish() {
+    const input = document.getElementById('postInput');
+    const text  = input.value.trim();
+    if (!text) return;
+    Storage.addPost(text);
+    input.value = '';
+    updateCharCounter('charCounter', 'postInput', 500);
+    renderFeed(); updateStats();
+    UI.showToast('Postagem publicada! 🎉', 'success');
+    document.getElementById('postsFeed').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+  function openEditModal(id, text) {
+    _editingId = id;
+    const input = document.getElementById('editPostInput');
+    input.value = text;
+    updateCharCounter('editCharCounter', 'editPostInput', 500);
+    UI.openModal(); input.focus();
+  }
+  function handleSaveEdit() {
+    if (!_editingId) return;
+    const input = document.getElementById('editPostInput');
+    const newText = input.value.trim();
+    if (!newText) return;
+    Storage.editPost(_editingId, newText);
+    _editingId = null; UI.closeModal();
+    renderFeed(); renderProfilePosts();
+    UI.showToast('Postagem atualizada!', 'success');
+  }
+  function handleDelete(id) {
+    if (!confirm('Tem certeza que deseja excluir esta postagem?')) return;
+    Storage.deletePost(id); renderFeed(); renderProfilePosts(); updateStats();
+    UI.showToast('Postagem excluída.', 'error');
+  }
+  function updateCharCounter(counterId, inputId, max) {
+    const counter = document.getElementById(counterId);
+    const input   = document.getElementById(inputId);
+    const rem = max - input.value.length;
+    counter.textContent = `${rem} caractere${rem !== 1 ? 's' : ''} restante${rem !== 1 ? 's' : ''}`;
+    counter.className = 'char-counter';
+    if (rem <= 50) counter.classList.add('warning');
+    if (rem <= 20) counter.classList.add('danger');
+  }
+  function updateStats() {
+    const posts = Storage.getPosts();
+    document.getElementById('statPosts').textContent = posts.length;
+    const days = new Set(posts.map(p => new Date(p.createdAt).toDateString()));
+    document.getElementById('statDays').textContent = days.size;
+  }
+  return { renderFeed, renderProfilePosts, handlePublish, handleSaveEdit, openEditModal, updateCharCounter, updateStats, getInitials };
+})();
+
+// ===== ui.js =====
+const UI = (() => {
+  function openModal()  { document.getElementById('modalOverlay').classList.remove('hidden'); document.body.style.overflow = 'hidden'; }
+  function closeModal() { document.getElementById('modalOverlay').classList.add('hidden');    document.body.style.overflow = ''; }
+  function activateTab(tab) {
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.toggle('active', p.id === `tab-${tab}`));
+    document.querySelectorAll('.nav-item').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
+    if (tab === 'profile') { Posts.renderProfilePosts(); Posts.updateStats(); }
+  }
+  let _timer = null;
+  function showToast(msg, type = '') {
+    const t = document.getElementById('toast');
+    t.textContent = msg; t.className = `toast show ${type}`;
+    if (_timer) clearTimeout(_timer);
+    _timer = setTimeout(() => t.classList.remove('show'), 2800);
+  }
+  return { openModal, closeModal, activateTab, showToast };
+})();
+
+// ===== app.js =====
+document.addEventListener('DOMContentLoaded', () => {
+  Profile.syncUI();
+  Posts.renderFeed();
+  Posts.updateStats();
+
+  document.querySelectorAll('.nav-item').forEach(b => b.addEventListener('click', () => UI.activateTab(b.dataset.tab)));
+  document.querySelectorAll('.tab-btn').forEach(b => b.addEventListener('click', () => UI.activateTab(b.dataset.tab)));
+
+  const postInput  = document.getElementById('postInput');
+  const btnPublish = document.getElementById('btnPublish');
+  btnPublish.disabled = true;
+
+  postInput.addEventListener('input', () => {
+    Posts.updateCharCounter('charCounter', 'postInput', 500);
+    btnPublish.disabled = postInput.value.trim().length === 0;
+  });
+  btnPublish.addEventListener('click', () => Posts.handlePublish());
+  postInput.addEventListener('keydown', e => {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') { e.preventDefault(); if (postInput.value.trim()) Posts.handlePublish(); }
+  });
+
+  document.getElementById('editPostInput').addEventListener('input', () => Posts.updateCharCounter('editCharCounter', 'editPostInput', 500));
+  document.getElementById('btnSaveEdit').addEventListener('click',    () => Posts.handleSaveEdit());
+  document.getElementById('btnCancelModal').addEventListener('click', () => UI.closeModal());
+  document.getElementById('modalClose').addEventListener('click',     () => UI.closeModal());
+  document.getElementById('modalOverlay').addEventListener('click', e => { if (e.target === document.getElementById('modalOverlay')) UI.closeModal(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') UI.closeModal(); });
+
+  document.getElementById('btnEditProfile').addEventListener('click', () => Profile.openEditForm());
+  document.getElementById('btnCancelEdit').addEventListener('click',  () => Profile.closeEditForm());
+  document.getElementById('btnSaveProfile').addEventListener('click', () => Profile.save());
+});
+  </script>
+</body>
+</html>

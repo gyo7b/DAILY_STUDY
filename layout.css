@@ -1,0 +1,217 @@
+/*
+ * ╔══════════════════════════════════════════════════════════════╗
+ * ║  layout.css — Estrutura da Página                           ║
+ * ║                                                              ║
+ * ║  Define o esqueleto do app:                                  ║
+ * ║    .app-shell     → container raiz flex                      ║
+ * ║    .rail          → navegação lateral (desktop)              ║
+ * ║    .center-col    → coluna central com o conteúdo            ║
+ * ║    .tab-panel     → painéis de aba (feed / perfil)           ║
+ * ║    .bottom-bar    → navegação inferior (mobile)              ║
+ * ╚══════════════════════════════════════════════════════════════╝
+ */
+
+
+/* ══════════════════════════════════════════════
+   APP SHELL — container raiz
+   Usa flexbox horizontal; a rail fica à esquerda
+   e a coluna central ocupa o restante.
+══════════════════════════════════════════════ */
+.app-shell {
+  display: flex;
+  min-height: 100vh;
+}
+
+
+/* ══════════════════════════════════════════════
+   RAIL — barra lateral de navegação (desktop)
+   Posição fixa para não sair de vista durante scroll.
+   Oculta em mobile via media query abaixo.
+══════════════════════════════════════════════ */
+.rail {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: var(--sidebar-w);
+  height: 100vh;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+
+  /* Empilha itens verticalmente, centralizados horizontalmente */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px 0;
+  gap: 4px;
+
+  z-index: 200;   /* acima do conteúdo, abaixo de modais (z:500) */
+}
+
+/* ── Logo da rail ─────────────────────────────── */
+.rail-logo {
+  font-family: var(--font-ui);
+  font-weight: 800;
+  font-size: .82rem;
+  letter-spacing: -.01em;
+  background: var(--ink);
+  color: #fff;
+  width: 40px;
+  height: 40px;
+  border-radius: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 18px;
+  user-select: none;
+}
+
+/* ── Botões da rail ───────────────────────────── */
+.rail-btn {
+  position: relative;                 /* para o tooltip absoluto */
+  width: 48px;
+  height: 48px;
+  border-radius: var(--r-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink-3);
+  transition: background var(--t), color var(--t);
+}
+
+.rail-btn:hover {
+  background: var(--bg-2);
+  color: var(--ink);
+}
+
+.rail-btn.active {
+  background: var(--accent-bg);
+  color: var(--accent);
+}
+
+/* Tooltip lateral que aparece no hover do botão */
+.rail-tooltip {
+  position: absolute;
+  left: calc(100% + 12px);     /* à direita do botão */
+  background: var(--ink);
+  color: #fff;
+  font-size: .72rem;
+  font-weight: 600;
+  padding: 5px 10px;
+  border-radius: var(--r-sm);
+  white-space: nowrap;
+  pointer-events: none;        /* não bloqueia interações */
+  opacity: 0;
+  transform: translateX(-6px);
+  transition: opacity var(--t), transform var(--t);
+}
+
+.rail-btn:hover .rail-tooltip {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+
+/* ══════════════════════════════════════════════
+   COLUNA CENTRAL — conteúdo das abas
+   margin-left = largura da rail para não sobrepor.
+   max-width garante leitura confortável.
+══════════════════════════════════════════════ */
+.center-col {
+  margin-left: var(--sidebar-w);
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;           /* centraliza o conteúdo horizontalmente */
+  padding: 32px 16px 80px;       /* 80px embaixo = espaço para bottom-bar no mobile */
+}
+
+/* Todos os painéis de aba respeitam a largura máxima */
+.center-col > .tab-panel {
+  width: 100%;
+  max-width: var(--content-max);
+}
+
+
+/* ══════════════════════════════════════════════
+   TAB PANELS — painéis alternáveis (feed / perfil)
+   Cada painel é display:none por padrão;
+   recebe .active ao ser selecionado.
+══════════════════════════════════════════════ */
+.tab-panel {
+  display: none;
+  /* Animação de entrada suave ao trocar de aba */
+  animation: fadeUp .28s ease both;
+}
+
+.tab-panel.active {
+  display: block;
+}
+
+
+/* ══════════════════════════════════════════════
+   BOTTOM BAR — barra de navegação mobile
+   Fica oculta em desktop; exibida em ≤ 640px.
+   Posição fixa na parte inferior da tela.
+══════════════════════════════════════════════ */
+.bottom-bar {
+  /* Oculto em desktop por padrão */
+  display: none;
+
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: var(--bottom-bar-h);
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  align-items: center;
+  justify-content: space-around;
+  z-index: 200;
+}
+
+/* Botões da barra inferior */
+.bottom-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  font-size: .65rem;
+  font-weight: 600;
+  color: var(--ink-3);
+  padding: 6px 24px;
+  border-radius: var(--r-md);
+  transition: color var(--t);
+}
+
+.bottom-btn.active {
+  color: var(--accent);
+}
+
+
+/* ══════════════════════════════════════════════
+   RESPONSIVIDADE
+   Em telas ≤ 640px:
+     - A rail desaparece
+     - A bottom-bar aparece (display:flex)
+     - A coluna central começa do 0 (sem margem lateral)
+     - O padding superior considera a topbar implícita
+══════════════════════════════════════════════ */
+@media (max-width: 640px) {
+
+  /* Oculta a rail lateral */
+  .rail {
+    display: none;
+  }
+
+  /* Exibe a barra inferior */
+  .bottom-bar {
+    display: flex;
+  }
+
+  /* Remove a margem que compensava a rail */
+  .center-col {
+    margin-left: 0;
+    padding: 20px 12px calc(var(--bottom-bar-h) + 16px);
+  }
+
+}

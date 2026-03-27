@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<!--
+  ╔══════════════════════════════════════════════════════════════╗
+  ║                     DAILY STUDY — v2.0                      ║
+  ║  Feed social com perfil, imagens e persistência local        ║
+  ║                                                              ║
+  ║  Estrutura de arquivos:                                      ║
+  ║    index.html          ← você está aqui                      ║
+  ║    css/                                                       ║
+  ║      variables.css     ← tokens de design (cores, fontes…)  ║
+  ║      reset.css         ← normalização base do browser        ║
+  ║      layout.css        ← estrutura da página e navegação     ║
+  ║      components.css    ← botões, modais, toasts, avatares    ║
+  ║      feed.css          ← compose box e cards de post         ║
+  ║      profile.css       ← banner, avatar e aba de perfil      ║
+  ║      animations.css    ← keyframes e transições              ║
+  ║    js/                                                        ║
+  ║      storage.js        ← leitura/escrita no localStorage     ║
+  ║      profile.js        ← lógica do perfil                    ║
+  ║      posts.js          ← criar/editar/excluir/renderizar     ║
+  ║      ui.js             ← abas, modal, toast, lightbox        ║
+  ║      app.js            ← ponto de entrada e event listeners  ║
+  ╚══════════════════════════════════════════════════════════════╝
+-->
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="description" content="Daily Study — Feed social para compartilhar seus estudos diários"/>
+  <title>Daily Study</title>
+
+  <!-- Google Fonts: Outfit (display/UI) + Lora (corpo do texto) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Lora:ital,wght@0,400;0,600;1,400&display=swap"
+    rel="stylesheet"
+  />
+
+  <!-- CSS em ordem de dependência (tokens → base → estrutura → peças → feature) -->
+  <link rel="stylesheet" href="css/variables.css"/>
+  <link rel="stylesheet" href="css/reset.css"/>
+  <link rel="stylesheet" href="css/layout.css"/>
+  <link rel="stylesheet" href="css/components.css"/>
+  <link rel="stylesheet" href="css/feed.css"/>
+  <link rel="stylesheet" href="css/profile.css"/>
+  <link rel="stylesheet" href="css/animations.css"/>
+</head>
+<body>
+
+<!--
+  APP SHELL
+  ─────────
+  Contém três áreas distintas:
+    1. .rail       – barra lateral de navegação (desktop)
+    2. .center-col – coluna central com o conteúdo das abas
+    3. .bottom-bar – barra inferior de navegação (mobile)
+-->
+<div class="app-shell">
+
+  <!-- ══════════════════════════════════════
+       RAIL — navegação lateral (desktop)
+  ══════════════════════════════════════ -->
+  <nav class="rail" id="rail" role="navigation" aria-label="Navegação principal">
+
+    <div class="rail-logo" title="Daily Study">DS</div>
+
+    <!-- Botão Feed -->
+    <button
+      class="rail-btn active"
+      data-tab="feed"
+      aria-label="Feed"
+      aria-current="page"
+    >
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+           stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+        <polyline points="9 22 9 12 15 12 15 22"/>
+      </svg>
+      <span class="rail-tooltip">Feed</span>
+    </button>
+
+    <!-- Botão Perfil -->
+    <button
+      class="rail-btn"
+      data-tab="profile"
+      aria-label="Perfil"
+    >
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+           stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+        <circle cx="12" cy="7" r="4"/>
+      </svg>
+      <span class="rail-tooltip">Perfil</span>
+    </button>
+
+  </nav>
+
+
+  <!-- ══════════════════════════════════════
+       COLUNA CENTRAL — conteúdo das abas
+  ══════════════════════════════════════ -->
+  <main class="center-col" role="main">
+
+
+    <!-- ─────────────────────────────────────
+         ABA: FEED
+         Compose box para criar posts
+         + lista de posts em ordem cronológica
+    ───────────────────────────────────────── -->
+    <section
+      class="tab-panel active"
+      id="tab-feed"
+      role="tabpanel"
+    >
+
+      <!-- Topo do feed: título + contador de posts -->
+      <div class="feed-top">
+        <h1 class="feed-title">Feed</h1>
+        <span class="post-badge" id="postBadge" aria-live="polite">0 posts</span>
+      </div>
+
+
+      <!--
+        COMPOSE BOX
+        ────────────
+        Área de criação de novo post.
+        Contém avatar, textarea, upload de imagem,
+        contador de caracteres e botão publicar.
+        O botão "Publicar" fica desabilitado até haver texto.
+        Atalho de teclado: Ctrl+Enter / Cmd+Enter.
+      -->
+      <div class="compose" id="compose">
+        <div class="compose-row">
+
+          <!-- Avatar (clique leva à aba de perfil) -->
+          <div
+            class="compose-ava"
+            id="composeAva"
+            role="button"
+            tabindex="0"
+            title="Ver perfil"
+            aria-label="Seu avatar"
+          ></div>
+
+          <!-- Corpo do compose -->
+          <div class="compose-body">
+
+            <!-- Textarea principal -->
+            <textarea
+              id="postInput"
+              class="compose-ta"
+              placeholder="O que você está estudando hoje?"
+              maxlength="500"
+              rows="3"
+              aria-label="Texto da postagem"
+            ></textarea>
+
+            <!--
+              Pré-visualização da imagem selecionada
+              Aparece somente após o usuário escolher uma imagem.
+              Botão ✕ remove a imagem e limpa o input file.
+            -->
+            <div id="composeImgPreview" class="compose-img-preview hidden">
+              <img id="composePreviewImg" src="" alt="Prévia da imagem"/>
+              <button
+                class="remove-img-btn"
+                id="removeImgBtn"
+                title="Remover imagem"
+                aria-label="Remover imagem selecionada"
+              >✕</button>
+            </div>
+
+            <!-- Rodapé: ferramentas à esquerda | contador + publicar à direita -->
+            <div class="compose-foot">
+
+              <!-- Ferramenta de upload de imagem -->
+              <div class="compose-tools">
+                <!--
+                  O <label> funciona como botão e aciona o <input file> oculto.
+                  Aceita apenas imagens. O arquivo selecionado é convertido para
+                  Base64 (Data URL) via FileReader e guardado no localStorage.
+                -->
+                <label
+                  for="imgInput"
+                  class="tool-btn img-tool-btn"
+                  title="Anexar imagem ao post"
+                  aria-label="Selecionar imagem"
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                       stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <rect x="3" y="3" width="18" height="18" rx="2"/>
+                    <circle cx="8.5" cy="8.5" r="1.5"/>
+                    <polyline points="21 15 16 10 5 21"/>
+                  </svg>
+                  <span>Imagem</span>
+                </label>
+                <!-- Input file OCULTO via CSS (display:none em reset.css) -->
+                <input type="file" id="imgInput" accept="image/*" aria-hidden="true"/>
+              </div>
+
+              <!-- Contador + botão publicar -->
+              <div class="compose-right">
+                <span
+                  class="char-counter"
+                  id="charCount"
+                  aria-live="polite"
+                >500</span>
+                <button
+                  class="btn-post"
+                  id="btnPost"
+                  disabled
+                  aria-label="Publicar postagem (Ctrl+Enter)"
+                >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+                       stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+                    <line x1="22" y1="2" x2="11" y2="13"/>
+                    <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+                  </svg>
+                  Publicar
+                </button>
+              </div>
+
+            </div><!-- /compose-foot -->
+          </div><!-- /compose-body -->
+        </div><!-- /compose-row -->
+      </div><!-- /compose -->
+
+
+      <!-- Lista de posts injetada pelo JS (Posts.renderFeed) -->
+      <div class="feed-list" id="feedList" role="feed" aria-label="Postagens"></div>
+
+      <!-- Estado vazio: visível quando não há nenhum post -->
+      <div class="empty-state hidden" id="feedEmpty" role="status">
+        <div class="empty-ico" aria-hidden="true">📚</div>
+        <h3>Nenhuma postagem ainda</h3>
+        <p>Compartilhe o que você está estudando hoje!</p>
+      </div>
+
+    </section><!-- /tab-feed -->
+
+
+    <!-- ─────────────────────────────────────
+         ABA: PERFIL
+         Banner + avatar + nome/bio
+         + formulário de edição
+         + estatísticas
+         + posts do usuário
+    ───────────────────────────────────────── -->
+    <section
+      class="tab-panel"
+      id="tab-profile"
+      role="tabpanel"
+    >
+      <div class="profile-wrap">
+
+
+        <!--
+          HERO CARD
+          ──────────
+          Card principal do perfil.
+          Estrutura: banner (zona clicável) + body (avatar flutuando + info).
+          O avatar tem margin-top negativo para se sobrepor ao banner.
+          Clicar no banner ou no avatar abre o seletor de arquivo correspondente.
+        -->
+        <div class="profile-hero">
+
+          <!-- BANNER — área clicável que aciona o input de banner -->
+          <div
+            class="banner-zone"
+            id="bannerZone"
+            role="button"
+            tabindex="0"
+            aria-label="Banner do perfil. Clique para trocar."
+          >
+            <!-- Imagem do banner (oculta até ser definida) -->
+            <img id="bannerImg" src="" alt="Banner do perfil" class="hidden"/>
+            <!-- Hint de edição visível no hover -->
+            <div class="banner-overlay" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                   stroke="currentColor" stroke-width="2">
+                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+                <circle cx="12" cy="13" r="4"/>
+              </svg>
+              Trocar banner
+            </div>
+            <!-- Input file para o banner (oculto) -->
+            <input type="file" id="bannerInput" accept="image/*" aria-hidden="true"/>
+          </div>
+
+          <!-- Body do perfil (avatar + textos + botão editar) -->
+          <div class="profile-body">
+
+            <!--
+              Wrapper do avatar.
+              margin-top negativo faz o avatar "flutuar" sobre o banner.
+              O badge de edição (lápis) fica posicionado absolutamente.
+            -->
+            <div class="avatar-wrap">
+              <div
+                class="profile-ava-big"
+                id="profileAvaBig"
+                role="button"
+                tabindex="0"
+                aria-label="Foto de perfil. Clique para trocar."
+              ></div>
+              <!-- Badge de lápis sobre o avatar -->
+              <div class="ava-edit-badge" aria-hidden="true">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" stroke-width="2.5">
+                  <path d="M12 20h9"/>
+                  <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/>
+                </svg>
+              </div>
+              <!-- Input file para o avatar (oculto) -->
+              <input type="file" id="avatarInput" accept="image/*" aria-hidden="true"/>
+            </div>
+
+            <!-- Linha: info do perfil + botão editar -->
+            <div class="profile-name-row">
+              <div class="profile-info">
+                <div class="p-name" id="pName">Carregando…</div>
+                <div class="p-role">Estudante · Daily Study</div>
+                <div class="p-bio" id="pBio"></div>
+              </div>
+              <button class="btn-edit-p" id="btnEditP">Editar perfil</button>
+            </div>
+
+          </div><!-- /profile-body -->
+        </div><!-- /profile-hero -->
+
+
+        <!--
+          FORMULÁRIO DE EDIÇÃO DO PERFIL
+          ──────────────────────────────
+          Oculto por padrão (.hidden).
+          Exibido ao clicar em "Editar perfil".
+          Campos: nome e bio.
+          Salvar → Profile.save() → sincroniza UI + localStorage.
+        -->
+        <div class="edit-form hidden" id="editForm" role="form" aria-label="Editar perfil">
+          <h3>Editar Perfil</h3>
+
+          <div class="form-field">
+            <label for="eName">Nome</label>
+            <input
+              type="text"
+              id="eName"
+              maxlength="50"
+              placeholder="Seu nome completo"
+            />
+          </div>
+
+          <div class="form-field">
+            <label for="eBio">Biografia</label>
+            <textarea
+              id="eBio"
+              rows="3"
+              maxlength="200"
+              placeholder="Fale um pouco sobre você e seus estudos…"
+            ></textarea>
+          </div>
+
+          <div class="form-actions">
+            <button class="btn-secondary" id="btnCancelEdit">Cancelar</button>
+            <button class="btn-primary"   id="btnSaveEdit">Salvar</button>
+          </div>
+        </div><!-- /edit-form -->
+
+
+        <!-- ESTATÍSTICAS: total de posts + dias únicos ativos -->
+        <div class="stats-row" role="region" aria-label="Estatísticas">
+          <div class="stat-box">
+            <span class="stat-num" id="statPosts">0</span>
+            <span class="stat-lbl">Postagens</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-num" id="statDays">0</span>
+            <span class="stat-lbl">Dias ativos</span>
+          </div>
+        </div>
+
+
+        <!-- POSTS DO PERFIL (mesmos posts do feed, reexibidos aqui) -->
+        <div role="region" aria-label="Suas postagens">
+          <div class="section-head">
+            <span class="section-title">Suas postagens</span>
+            <div class="section-divider" aria-hidden="true"></div>
+          </div>
+          <div class="feed-list" id="profileFeed" role="feed"></div>
+          <div class="empty-state hidden" id="profileEmpty" role="status">
+            <div class="empty-ico" aria-hidden="true">✏️</div>
+            <h3>Sem postagens ainda</h3>
+            <p>Publique algo no feed!</p>
+          </div>
+        </div>
+
+
+      </div><!-- /profile-wrap -->
+    </section><!-- /tab-profile -->
+
+
+  </main><!-- /center-col -->
+
+
+  <!-- ══════════════════════════════════════
+       BOTTOM BAR — navegação mobile (≤640px)
+  ══════════════════════════════════════ -->
+  <nav class="bottom-bar" id="bottomBar" role="navigation" aria-label="Navegação mobile">
+    <button class="bottom-btn active" data-tab="feed" aria-label="Feed" aria-current="page">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+           stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+        <polyline points="9 22 9 12 15 12 15 22"/>
+      </svg>
+      Feed
+    </button>
+    <button class="bottom-btn" data-tab="profile" aria-label="Perfil">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+           stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+        <circle cx="12" cy="7" r="4"/>
+      </svg>
+      Perfil
+    </button>
+  </nav>
+
+</div><!-- /app-shell -->
+
+
+<!-- ══════════════════════════════════════════════════════════
+     MODAL DE EDIÇÃO DE POST
+     Exibido ao clicar em "editar" em qualquer post.
+     Permite alterar o texto do post (a imagem permanece).
+══════════════════════════════════════════════════════════ -->
+<div
+  class="modal-backdrop hidden"
+  id="modalBackdrop"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="modalTitle"
+>
+  <div class="modal">
+    <div class="modal-head">
+      <h3 id="modalTitle">Editar postagem</h3>
+      <button class="modal-close-btn" id="modalCloseBtn" aria-label="Fechar">✕</button>
+    </div>
+    <textarea
+      id="editTa"
+      class="modal-ta"
+      maxlength="500"
+      rows="5"
+      aria-label="Novo texto da postagem"
+    ></textarea>
+    <div class="modal-foot">
+      <span class="char-counter" id="editCount" aria-live="polite">500</span>
+      <div class="modal-actions">
+        <button class="btn-secondary" id="modalCancelBtn">Cancelar</button>
+        <button class="btn-primary"   id="modalSaveBtn">Salvar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     LIGHTBOX DE IMAGEM
+     Abre ao clicar em qualquer imagem de post.
+     Clique fora ou no botão ✕ fecha.
+══════════════════════════════════════════════════════════ -->
+<div
+  class="lightbox hidden"
+  id="lightbox"
+  role="dialog"
+  aria-modal="true"
+  aria-label="Visualizador de imagem"
+>
+  <button class="lightbox-close" id="lightboxClose" aria-label="Fechar imagem">✕</button>
+  <img id="lightboxImg" src="" alt="Imagem em tamanho original"/>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     TOAST — Notificação flutuante de feedback
+     aria-live="polite" anuncia para leitores de tela.
+══════════════════════════════════════════════════════════ -->
+<div class="toast" id="toast" role="alert" aria-live="polite" aria-atomic="true"></div>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     SCRIPTS — carregados ao final do body para não bloquear render.
+     Ordem de carregamento OBRIGATÓRIA (cada módulo depende do anterior):
+       storage.js  →  profile.js  →  posts.js  →  ui.js  →  app.js
+══════════════════════════════════════════════════════════ -->
+<script src="js/storage.js"></script>
+<script src="js/profile.js"></script>
+<script src="js/posts.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/app.js"></script>
+
+</body>
+</html>

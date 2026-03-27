@@ -1,0 +1,3693 @@
+<!DOCTYPE html>
+<!--
+  DAILY STUDY v2.0 — Bundle autocontido
+  Todos os CSS e JS estão embutidos neste único arquivo.
+  Para o projeto modular completo (arquivos separados), use os
+  arquivos na pasta /daily-study/.
+-->
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Daily Study</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet"/>
+<style>
+/*
+ * ╔══════════════════════════════════════════════════════════════╗
+ * ║  variables.css — Design Tokens                              ║
+ * ║                                                              ║
+ * ║  Todas as variáveis CSS do projeto ficam aqui.              ║
+ * ║  Altere aqui para modificar cores, espaçamentos ou fontes   ║
+ * ║  em toda a aplicação de uma vez.                            ║
+ * ╚══════════════════════════════════════════════════════════════╝
+ */
+
+:root {
+
+  /* ──────────────────────────────────────────
+     PALETA DE CORES
+     Tema claro/quente inspirado em papel,
+     com acento azul intenso para ações primárias.
+  ────────────────────────────────────────── */
+
+  /* Fundo da página */
+  --bg:          #f4f2ee;    /* creme suave */
+  --bg-2:        #eceae5;    /* creme um pouco mais escuro (hover, inputs) */
+
+  /* Superfícies (cards, modais, compose) */
+  --surface:     #ffffff;
+
+  /* Bordas */
+  --border:      #e3e0d8;    /* borda padrão */
+  --border-2:    #ccc8be;    /* borda mais escura (hover, foco) */
+
+  /* Texto */
+  --ink:         #1c1a17;    /* texto principal */
+  --ink-2:       #57544e;    /* texto secundário */
+  --ink-3:       #9e9b95;    /* texto terciário / placeholders */
+
+  /* Acento (ações primárias) */
+  --accent:      #2550e8;
+  --accent-h:    #1840c4;    /* hover do acento */
+  --accent-bg:   #edf0fd;    /* fundo suave do acento */
+
+  /* Semânticas */
+  --danger:      #d43f3f;
+  --danger-bg:   rgba(212,63,63,.08);
+  --success:     #1f9966;
+  --warn:        #c47a18;
+
+
+  /* ──────────────────────────────────────────
+     TIPOGRAFIA
+  ────────────────────────────────────────── */
+
+  /* Outfit: sans-serif geométrica — UI, labels, botões, navegação */
+  --font-ui:     'Outfit', sans-serif;
+
+  /* Lora: serifada elegante — corpo das postagens */
+  --font-body:   'Lora', serif;
+
+
+  /* ──────────────────────────────────────────
+     ESPAÇAMENTOS
+     Usar estas variáveis para padding/gap/margin
+     mantém ritmo visual consistente.
+  ────────────────────────────────────────── */
+  --sp-xs:  4px;
+  --sp-sm:  8px;
+  --sp-md:  16px;
+  --sp-lg:  24px;
+  --sp-xl:  40px;
+
+
+  /* ──────────────────────────────────────────
+     BORDAS ARREDONDADAS
+  ────────────────────────────────────────── */
+  --r-xs:   4px;
+  --r-sm:   8px;
+  --r-md:   14px;
+  --r-lg:   22px;
+  --r-xl:   32px;
+  --r-pill: 999px;
+
+
+  /* ──────────────────────────────────────────
+     SOMBRAS
+  ────────────────────────────────────────── */
+  --sh:     0 1px 3px rgba(0,0,0,.05), 0 4px 12px rgba(0,0,0,.06);
+  --sh-lg:  0 4px 8px rgba(0,0,0,.04), 0 16px 48px rgba(0,0,0,.10);
+
+
+  /* ──────────────────────────────────────────
+     LAYOUT
+  ────────────────────────────────────────── */
+
+  /* Largura da rail lateral de navegação */
+  --sidebar-w:   76px;
+
+  /* Largura máxima da coluna central de conteúdo */
+  --content-max: 640px;
+
+  /* Altura da barra inferior mobile */
+  --bottom-bar-h: 58px;
+
+
+  /* ──────────────────────────────────────────
+     TRANSIÇÕES
+     Usar --t para transições padrão de hover/foco.
+  ────────────────────────────────────────── */
+  --t:      .18s ease;
+  --t-slow: .35s ease;
+
+}
+/*
+ * ╔══════════════════════════════════════════════════════════════╗
+ * ║  reset.css — Normalização e Estilos Base                    ║
+ * ║                                                              ║
+ * ║  Remove inconsistências entre browsers e define os estilos  ║
+ * ║  mais básicos de HTML e body.                                ║
+ * ╚══════════════════════════════════════════════════════════════╝
+ */
+
+/* ── Box model universal ─────────────────────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* ── Base da página ──────────────────────────────── */
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-ui);
+  background-color: var(--bg);
+  color: var(--ink);
+  line-height: 1.6;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;  /* suaviza texto no WebKit */
+  -moz-osx-font-smoothing: grayscale;   /* suaviza texto no Firefox/macOS */
+}
+
+/* ── Botões: herdam fonte e removem estilos nativos ─ */
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+  color: inherit;
+  line-height: inherit;
+}
+
+/* ── Campos de texto ─────────────────────────────── */
+input,
+textarea {
+  font-family: inherit;
+  border: none;
+  outline: none;
+  background: none;
+  color: inherit;
+  resize: none;       /* desabilita resize manual do textarea */
+  line-height: inherit;
+}
+
+/* ── Listas ──────────────────────────────────────── */
+ul,
+ol {
+  list-style: none;
+}
+
+/* ── Imagens ─────────────────────────────────────── */
+img {
+  display: block;
+  max-width: 100%;
+  object-fit: cover;  /* padrão; cada uso pode sobrescrever */
+}
+
+/* ── Links ───────────────────────────────────────── */
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* ── Inputs de arquivo SEMPRE ocultos ───────────────
+   Todos os <input type="file"> são acionados por
+   <label> clicáveis visualmente estilizados.         */
+input[type="file"] {
+  display: none;
+}
+
+/* ── Classe utilitária de ocultamento ───────────────
+   Usa !important para garantir que o JS possa
+   mostrar/ocultar elementos adicionando/removendo
+   esta classe sem conflito com outros estilos.       */
+.hidden {
+  display: none !important;
+}
+/*
+ * ╔══════════════════════════════════════════════════════════════╗
+ * ║  layout.css — Estrutura da Página                           ║
+ * ║                                                              ║
+ * ║  Define o esqueleto do app:                                  ║
+ * ║    .app-shell     → container raiz flex                      ║
+ * ║    .rail          → navegação lateral (desktop)              ║
+ * ║    .center-col    → coluna central com o conteúdo            ║
+ * ║    .tab-panel     → painéis de aba (feed / perfil)           ║
+ * ║    .bottom-bar    → navegação inferior (mobile)              ║
+ * ╚══════════════════════════════════════════════════════════════╝
+ */
+
+
+/* ══════════════════════════════════════════════
+   APP SHELL — container raiz
+   Usa flexbox horizontal; a rail fica à esquerda
+   e a coluna central ocupa o restante.
+══════════════════════════════════════════════ */
+.app-shell {
+  display: flex;
+  min-height: 100vh;
+}
+
+
+/* ══════════════════════════════════════════════
+   RAIL — barra lateral de navegação (desktop)
+   Posição fixa para não sair de vista durante scroll.
+   Oculta em mobile via media query abaixo.
+══════════════════════════════════════════════ */
+.rail {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: var(--sidebar-w);
+  height: 100vh;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+
+  /* Empilha itens verticalmente, centralizados horizontalmente */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px 0;
+  gap: 4px;
+
+  z-index: 200;   /* acima do conteúdo, abaixo de modais (z:500) */
+}
+
+/* ── Logo da rail ─────────────────────────────── */
+.rail-logo {
+  font-family: var(--font-ui);
+  font-weight: 800;
+  font-size: .82rem;
+  letter-spacing: -.01em;
+  background: var(--ink);
+  color: #fff;
+  width: 40px;
+  height: 40px;
+  border-radius: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 18px;
+  user-select: none;
+}
+
+/* ── Botões da rail ───────────────────────────── */
+.rail-btn {
+  position: relative;                 /* para o tooltip absoluto */
+  width: 48px;
+  height: 48px;
+  border-radius: var(--r-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink-3);
+  transition: background var(--t), color var(--t);
+}
+
+.rail-btn:hover {
+  background: var(--bg-2);
+  color: var(--ink);
+}
+
+.rail-btn.active {
+  background: var(--accent-bg);
+  color: var(--accent);
+}
+
+/* Tooltip lateral que aparece no hover do botão */
+.rail-tooltip {
+  position: absolute;
+  left: calc(100% + 12px);     /* à direita do botão */
+  background: var(--ink);
+  color: #fff;
+  font-size: .72rem;
+  font-weight: 600;
+  padding: 5px 10px;
+  border-radius: var(--r-sm);
+  white-space: nowrap;
+  pointer-events: none;        /* não bloqueia interações */
+  opacity: 0;
+  transform: translateX(-6px);
+  transition: opacity var(--t), transform var(--t);
+}
+
+.rail-btn:hover .rail-tooltip {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+
+/* ══════════════════════════════════════════════
+   COLUNA CENTRAL — conteúdo das abas
+   margin-left = largura da rail para não sobrepor.
+   max-width garante leitura confortável.
+══════════════════════════════════════════════ */
+.center-col {
+  margin-left: var(--sidebar-w);
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;           /* centraliza o conteúdo horizontalmente */
+  padding: 32px 16px 80px;       /* 80px embaixo = espaço para bottom-bar no mobile */
+}
+
+/* Todos os painéis de aba respeitam a largura máxima */
+.center-col > .tab-panel {
+  width: 100%;
+  max-width: var(--content-max);
+}
+
+
+/* ══════════════════════════════════════════════
+   TAB PANELS — painéis alternáveis (feed / perfil)
+   Cada painel é display:none por padrão;
+   recebe .active ao ser selecionado.
+══════════════════════════════════════════════ */
+.tab-panel {
+  display: none;
+  /* Animação de entrada suave ao trocar de aba */
+  animation: fadeUp .28s ease both;
+}
+
+.tab-panel.active {
+  display: block;
+}
+
+
+/* ══════════════════════════════════════════════
+   BOTTOM BAR — barra de navegação mobile
+   Fica oculta em desktop; exibida em ≤ 640px.
+   Posição fixa na parte inferior da tela.
+══════════════════════════════════════════════ */
+.bottom-bar {
+  /* Oculto em desktop por padrão */
+  display: none;
+
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: var(--bottom-bar-h);
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  align-items: center;
+  justify-content: space-around;
+  z-index: 200;
+}
+
+/* Botões da barra inferior */
+.bottom-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  font-size: .65rem;
+  font-weight: 600;
+  color: var(--ink-3);
+  padding: 6px 24px;
+  border-radius: var(--r-md);
+  transition: color var(--t);
+}
+
+.bottom-btn.active {
+  color: var(--accent);
+}
+
+
+/* ══════════════════════════════════════════════
+   RESPONSIVIDADE
+   Em telas ≤ 640px:
+     - A rail desaparece
+     - A bottom-bar aparece (display:flex)
+     - A coluna central começa do 0 (sem margem lateral)
+     - O padding superior considera a topbar implícita
+══════════════════════════════════════════════ */
+@media (max-width: 640px) {
+
+  /* Oculta a rail lateral */
+  .rail {
+    display: none;
+  }
+
+  /* Exibe a barra inferior */
+  .bottom-bar {
+    display: flex;
+  }
+
+  /* Remove a margem que compensava a rail */
+  .center-col {
+    margin-left: 0;
+    padding: 20px 12px calc(var(--bottom-bar-h) + 16px);
+  }
+
+}
+/*
+ * ╔══════════════════════════════════════════════════════════════╗
+ * ║  components.css — Componentes Reutilizáveis de UI           ║
+ * ║                                                              ║
+ * ║  Peças de interface que aparecem em múltiplos contextos:     ║
+ * ║    Botões primário, secundário e de post                     ║
+ * ║    Avatares (pequeno e grande)                               ║
+ * ║    Contador de caracteres                                    ║
+ * ║    Modal de edição de post                                   ║
+ * ║    Toast de notificação                                      ║
+ * ║    Lightbox de imagem                                        ║
+ * ║    Estado vazio (empty state)                                ║
+ * ╚══════════════════════════════════════════════════════════════╝
+ */
+
+
+/* ══════════════════════════════════════════════
+   BOTÕES
+══════════════════════════════════════════════ */
+
+/*
+  btn-primary: ação principal (Salvar, Publicar…)
+  Fundo no acento com sombra colorida.
+*/
+.btn-primary {
+  padding: 9px 22px;
+  border-radius: var(--r-pill);
+  background: var(--accent);
+  color: #fff;
+  font-weight: 700;
+  font-size: .85rem;
+  transition: background var(--t), transform var(--t), box-shadow var(--t);
+  box-shadow: 0 2px 8px rgba(37,80,232,.28);
+}
+
+.btn-primary:hover {
+  background: var(--accent-h);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(37,80,232,.38);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+/*
+  btn-secondary: ação secundária (Cancelar…)
+  Borda sutil, sem fundo.
+*/
+.btn-secondary {
+  padding: 9px 18px;
+  border-radius: var(--r-pill);
+  border: 1.5px solid var(--border-2);
+  color: var(--ink-2);
+  font-size: .85rem;
+  font-weight: 500;
+  transition: background var(--t), border-color var(--t);
+}
+
+.btn-secondary:hover {
+  background: var(--bg-2);
+  border-color: var(--ink-3);
+}
+
+/*
+  btn-post: botão "Publicar" dentro do compose box
+  Variação compacta do btn-primary com ícone inline.
+*/
+.btn-post {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 20px;
+  border-radius: var(--r-pill);
+  background: var(--accent);
+  color: #fff;
+  font-weight: 700;
+  font-size: .85rem;
+  transition: background var(--t), transform var(--t), box-shadow var(--t);
+  box-shadow: 0 2px 8px rgba(37,80,232,.28);
+  white-space: nowrap;
+}
+
+.btn-post:hover {
+  background: var(--accent-h);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(37,80,232,.38);
+}
+
+.btn-post:active {
+  transform: translateY(0);
+}
+
+/* Desabilitado: sem cursor e opacidade reduzida */
+.btn-post:disabled {
+  opacity: .4;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/*
+  btn-edit-p: botão "Editar perfil" no hero do perfil
+  Apenas borda; ativo no hover do acento.
+*/
+.btn-edit-p {
+  padding: 8px 18px;
+  border-radius: var(--r-pill);
+  border: 1.5px solid var(--border-2);
+  color: var(--ink-2);
+  font-weight: 600;
+  font-size: .82rem;
+  transition: border-color var(--t), color var(--t), background var(--t);
+  white-space: nowrap;
+}
+
+.btn-edit-p:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-bg);
+}
+
+
+/* ══════════════════════════════════════════════
+   AVATARES PEQUENOS
+   Usados no compose e nos posts do feed.
+   Exibem iniciais do nome ou uma foto (img dentro).
+══════════════════════════════════════════════ */
+.post-ava,
+.compose-ava {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: var(--ink);
+  color: #fff;
+  font-weight: 700;
+  font-size: .78rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;           /* não encolhe em flex */
+  overflow: hidden;
+  border: 2px solid var(--border);
+  transition: border-color var(--t), box-shadow var(--t);
+  cursor: pointer;
+  user-select: none;
+}
+
+/* Quando contém uma foto: a imagem preenche todo o círculo */
+.post-ava img,
+.compose-ava img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.compose-ava:hover {
+  border-color: var(--accent);
+}
+
+
+/* ══════════════════════════════════════════════
+   CONTADOR DE CARACTERES
+   Muda de cor conforme o limite se aproxima.
+══════════════════════════════════════════════ */
+.char-counter {
+  font-size: .73rem;
+  color: var(--ink-3);
+  min-width: 28px;
+  text-align: right;
+  transition: color var(--t);
+}
+
+/* Aviso: ≤ 80 caracteres restantes */
+.char-counter.warn {
+  color: var(--warn);
+  font-weight: 600;
+}
+
+/* Perigo: ≤ 20 caracteres restantes */
+.char-counter.danger {
+  color: var(--danger);
+  font-weight: 700;
+}
+
+
+/* ══════════════════════════════════════════════
+   MODAL DE EDIÇÃO DE POST
+   Backdrop com blur + card centralizado.
+══════════════════════════════════════════════ */
+
+/* Fundo escurecido com blur */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;                               /* cobre tela toda */
+  background: rgba(28, 26, 23, .55);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  z-index: 500;                           /* acima de tudo exceto toasts */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  animation: fadeIn .15s ease;
+}
+
+/* Card do modal */
+.modal {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-xl);
+  width: 100%;
+  max-width: 520px;
+  box-shadow: var(--sh-lg);
+  animation: slideUp .25s cubic-bezier(.34, 1.56, .64, 1);
+}
+
+/* Cabeçalho: título + botão fechar */
+.modal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 22px;
+  border-bottom: 1px solid var(--border);
+}
+
+.modal-head h3 {
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+/* Botão ✕ para fechar o modal */
+.modal-close-btn {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink-3);
+  font-size: .85rem;
+  transition: background var(--t), color var(--t);
+}
+
+.modal-close-btn:hover {
+  background: var(--bg-2);
+  color: var(--ink);
+}
+
+/* Textarea de edição */
+.modal-ta {
+  width: 100%;
+  padding: 16px 22px;
+  font-family: var(--font-body);
+  font-size: .95rem;
+  line-height: 1.65;
+  color: var(--ink);
+  background: transparent;
+  min-height: 120px;
+}
+
+/* Rodapé: contador + botões */
+.modal-foot {
+  padding: 12px 22px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.modal-actions {
+  display: flex;
+  gap: var(--sp-sm);
+}
+
+
+/* ══════════════════════════════════════════════
+   TOAST — Notificação temporária flutuante
+   Posicionado na parte inferior da tela.
+   Aparece/desaparece com classes .show .ok .err.
+══════════════════════════════════════════════ */
+.toast {
+  position: fixed;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%) translateY(16px);  /* começa levemente abaixo */
+  background: var(--ink);
+  color: #fff;
+  padding: 11px 24px;
+  border-radius: var(--r-pill);
+  font-size: .84rem;
+  font-weight: 600;
+  z-index: 900;                 /* acima de tudo */
+  opacity: 0;
+  white-space: nowrap;
+  box-shadow: var(--sh-lg);
+  transition: opacity .22s ease, transform .22s ease;
+  pointer-events: none;         /* não bloqueia cliques quando invisível */
+}
+
+/* Estado visível */
+.toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* Variante sucesso (verde) */
+.toast.ok {
+  background: var(--success);
+}
+
+/* Variante erro (vermelho) */
+.toast.err {
+  background: var(--danger);
+}
+
+/* Em mobile: sobe acima da bottom-bar */
+@media (max-width: 640px) {
+  .toast {
+    bottom: calc(var(--bottom-bar-h) + 16px);
+  }
+}
+
+
+/* ══════════════════════════════════════════════
+   LIGHTBOX — Visualizador de imagem em tela cheia
+══════════════════════════════════════════════ */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, .9);
+  z-index: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  cursor: zoom-out;
+  animation: fadeIn .18s ease;
+}
+
+.lightbox img {
+  max-width: min(90vw, 900px);
+  max-height: 90vh;
+  border-radius: var(--r-md);
+  object-fit: contain;           /* não corta a imagem */
+  box-shadow: var(--sh-lg);
+  cursor: default;
+}
+
+/* Botão de fechar no canto superior direito */
+.lightbox-close {
+  position: fixed;
+  top: 18px;
+  right: 18px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, .15);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: .9rem;
+  transition: background var(--t);
+  z-index: 801;
+}
+
+.lightbox-close:hover {
+  background: rgba(255, 255, 255, .28);
+}
+
+
+/* ══════════════════════════════════════════════
+   EMPTY STATE — mensagem quando não há conteúdo
+══════════════════════════════════════════════ */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 60px 20px;
+  gap: 10px;
+}
+
+.empty-ico {
+  font-size: 3rem;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.empty-state h3 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.empty-state p {
+  font-size: .88rem;
+  color: var(--ink-3);
+  max-width: 260px;
+}
+
+
+/* ══════════════════════════════════════════════
+   FORMULÁRIO DE EDIÇÃO (campos genéricos)
+   Usado na aba de perfil.
+══════════════════════════════════════════════ */
+.edit-form {
+  background: var(--surface);
+  border: 2px solid var(--accent);
+  border-radius: var(--r-xl);
+  padding: 24px;
+  box-shadow: var(--sh-lg);
+  animation: fadeUp .2s ease;
+}
+
+.edit-form h3 {
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+/* Par label + campo */
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+
+.form-field label {
+  font-size: .76rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--ink-3);
+}
+
+.form-field input,
+.form-field textarea {
+  background: var(--bg-2);
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-md);
+  padding: 10px 14px;
+  font-size: .9rem;
+  color: var(--ink);
+  transition: border-color var(--t), box-shadow var(--t);
+}
+
+.form-field input:focus,
+.form-field textarea:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(37,80,232,.1);
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--sp-sm);
+  margin-top: 8px;
+}
+/*
+ * ╔══════════════════════════════════════════════════════════════╗
+ * ║  feed.css — Compose Box e Cards de Post                     ║
+ * ║                                                              ║
+ * ║  Estilos específicos da aba "Feed":                          ║
+ * ║    .feed-top          → título + badge de contagem           ║
+ * ║    .compose           → caixa de criação de post             ║
+ * ║    .compose-img-preview → prévia da imagem selecionada       ║
+ * ║    .tool-btn           → botão de ferramenta (imagem…)       ║
+ * ║    .feed-list          → container dos posts                 ║
+ * ║    .post-card          → card individual de post             ║
+ * ║    .post-image         → imagem anexada ao post              ║
+ * ╚══════════════════════════════════════════════════════════════╝
+ */
+
+
+/* ══════════════════════════════════════════════
+   TOPO DO FEED
+   Linha com título e contador de posts.
+══════════════════════════════════════════════ */
+.feed-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.feed-title {
+  font-size: 1.55rem;
+  font-weight: 800;
+  letter-spacing: -.03em;
+}
+
+/* Pílula de contagem de posts */
+.post-badge {
+  font-size: .73rem;
+  font-weight: 600;
+  color: var(--ink-3);
+  background: var(--bg-2);
+  padding: 4px 12px;
+  border-radius: var(--r-pill);
+}
+
+
+/* ══════════════════════════════════════════════
+   COMPOSE BOX
+   Card de criação de post com avatar + textarea.
+   Muda borda ao receber foco (focus-within).
+══════════════════════════════════════════════ */
+.compose {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-xl);
+  padding: 18px;
+  margin-bottom: 20px;
+  box-shadow: var(--sh);
+  transition: border-color var(--t), box-shadow var(--t);
+}
+
+/* Borda azul + sombra leve ao ter foco em qualquer filho */
+.compose:focus-within {
+  border-color: var(--accent);
+  box-shadow: var(--sh), 0 0 0 3px rgba(37,80,232,.08);
+}
+
+/* Linha: avatar + corpo */
+.compose-row {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+
+/* O avatar ocupa espaço fixo; não encolhe */
+.compose-ava {
+  margin-top: 2px;  /* alinha visualmente com o texto */
+}
+
+/* Corpo do compose: empilhado verticalmente */
+.compose-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;     /* impede overflow em flex */
+}
+
+/* Textarea do compose */
+.compose-ta {
+  width: 100%;
+  font-family: var(--font-body);
+  font-size: 1rem;
+  color: var(--ink);
+  line-height: 1.65;
+  min-height: 56px;
+  background: transparent;
+}
+
+.compose-ta::placeholder {
+  color: var(--ink-3);
+}
+
+
+/* ══════════════════════════════════════════════
+   PRÉ-VISUALIZAÇÃO DE IMAGEM NO COMPOSE
+   Aparece abaixo da textarea quando o usuário
+   seleciona uma imagem. Inclui botão para remover.
+══════════════════════════════════════════════ */
+.compose-img-preview {
+  position: relative;
+  border-radius: var(--r-md);
+  overflow: hidden;
+  border: 1px solid var(--border);
+  /* Limita a altura para não tomar a tela toda */
+  max-height: 280px;
+  background: var(--bg-2);
+}
+
+.compose-img-preview img {
+  width: 100%;
+  max-height: 280px;
+  object-fit: cover;
+  display: block;
+}
+
+/* Botão ✕ para remover a imagem selecionada */
+.remove-img-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, .6);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: .78rem;
+  transition: background var(--t);
+}
+
+.remove-img-btn:hover {
+  background: var(--danger);
+}
+
+
+/* ══════════════════════════════════════════════
+   RODAPÉ DO COMPOSE
+   Linha com ferramentas à esquerda e ações à direita.
+══════════════════════════════════════════════ */
+.compose-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.compose-tools {
+  display: flex;
+  gap: 6px;
+}
+
+/* Lado direito: contador + botão publicar */
+.compose-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/*
+  Botão de ferramenta (ex: "Imagem")
+  Usa <label> para acionar o <input type="file"> oculto.
+  Estilizado como um botão discreto com ícone + texto.
+*/
+.tool-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 12px;
+  border-radius: var(--r-sm);
+  font-size: .78rem;
+  font-weight: 600;
+  color: var(--ink-3);
+  cursor: pointer;
+  transition: background var(--t), color var(--t);
+  user-select: none;
+}
+
+.tool-btn:hover {
+  background: var(--bg-2);
+  color: var(--accent);
+}
+
+/* Estado ativo: quando uma imagem já foi selecionada */
+.tool-btn.has-image {
+  color: var(--accent);
+  background: var(--accent-bg);
+}
+
+
+/* ══════════════════════════════════════════════
+   LISTA DE POSTS
+   Container flex vertical com espaçamento
+   entre os cards.
+══════════════════════════════════════════════ */
+.feed-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+
+/* ══════════════════════════════════════════════
+   POST CARD
+   Card individual de cada postagem.
+   Estrutura: cabeçalho (avatar + meta + ações)
+              + corpo (texto)
+              + imagem (opcional)
+              + rodapé (timestamp)
+══════════════════════════════════════════════ */
+.post-card {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-xl);
+  padding: 20px 22px;
+  box-shadow: var(--sh);
+  /* Animação de entrada; cada card tem delay escalonado (ver animations.css) */
+  animation: fadeUp .3s ease both;
+  transition: border-color var(--t), box-shadow var(--t);
+}
+
+.post-card:hover {
+  border-color: var(--border-2);
+  box-shadow: var(--sh-lg);
+}
+
+/* ── Cabeçalho do card ───────────────────────── */
+.post-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+/* Avatar do post (estilizado em components.css) */
+.post-ava {
+  width: 40px;
+  height: 40px;
+  font-size: .75rem;
+  margin-top: 1px;  /* alinha com a primeira linha do texto */
+}
+
+/* Meta: nome do autor + data */
+.post-meta {
+  flex: 1;
+  min-width: 0;
+}
+
+.post-author {
+  font-weight: 700;
+  font-size: .9rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.post-date {
+  font-size: .72rem;
+  color: var(--ink-3);
+  margin-top: 1px;
+}
+
+/*
+  Botões de ação (editar / excluir)
+  Ficam invisíveis e aparecem no hover do card.
+  Isso mantém a interface limpa.
+*/
+.post-actions {
+  display: flex;
+  gap: 4px;
+  /* Oculto por padrão */
+  opacity: 0;
+  transition: opacity var(--t);
+}
+
+/* Revela botões ao passar o mouse no card */
+.post-card:hover .post-actions {
+  opacity: 1;
+}
+
+/* Botão individual de ação (editar / excluir) */
+.pa-btn {
+  width: 30px;
+  height: 30px;
+  border-radius: var(--r-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink-3);
+  font-size: .8rem;
+  transition: background var(--t), color var(--t);
+}
+
+.pa-btn:hover {
+  background: var(--bg-2);
+  color: var(--ink);
+}
+
+/* Variante: botão excluir (vermelho no hover) */
+.pa-btn.del:hover {
+  background: var(--danger-bg);
+  color: var(--danger);
+}
+
+/* ── Texto do post ───────────────────────────── */
+.post-text {
+  font-family: var(--font-body);
+  font-size: .95rem;
+  line-height: 1.72;
+  color: var(--ink);
+  white-space: pre-wrap;    /* preserva quebras de linha do usuário */
+  word-break: break-word;   /* quebra palavras longas/URLs */
+}
+
+/* ── Imagem do post ──────────────────────────── */
+.post-image {
+  margin-top: 14px;
+  border-radius: var(--r-md);
+  overflow: hidden;
+  border: 1px solid var(--border);
+  /* Limita altura máxima para evitar imagens enormes */
+  max-height: 480px;
+  background: var(--bg-2);
+  cursor: zoom-in;          /* indica que é clicável para ampliar */
+}
+
+.post-image img {
+  width: 100%;
+  max-height: 480px;
+  object-fit: cover;
+  display: block;
+  transition: transform var(--t-slow);
+}
+
+/* Leve zoom ao passar o mouse */
+.post-image:hover img {
+  transform: scale(1.015);
+}
+
+/* ── Rodapé do post ──────────────────────────── */
+.post-footer {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+/* Timestamp no rodapé */
+.post-ts {
+  font-size: .7rem;
+  color: var(--ink-3);
+  margin-left: auto;  /* empurra para a direita */
+}
+
+/* Tag de "editado" exibida nos posts modificados */
+.post-edited-tag {
+  font-size: .7rem;
+  color: var(--ink-3);
+  font-style: italic;
+  margin-top: 10px;
+}
+/*
+ * ╔══════════════════════════════════════════════════════════════╗
+ * ║  profile.css — Aba de Perfil                                ║
+ * ║                                                              ║
+ * ║  Estilos da aba "Perfil":                                    ║
+ * ║    .profile-hero     → card com banner + avatar + info       ║
+ * ║    .banner-zone      → zona clicável do banner               ║
+ * ║    .avatar-wrap      → wrapper do avatar grande              ║
+ * ║    .profile-ava-big  → avatar grande (foto de perfil)        ║
+ * ║    .ava-edit-badge   → ícone de lápis sobre o avatar         ║
+ * ║    .stats-row        → grade de estatísticas                 ║
+ * ║    .section-head     → cabeçalho de seção com linha          ║
+ * ╚══════════════════════════════════════════════════════════════╝
+ */
+
+
+/* ══════════════════════════════════════════════
+   WRAPPER DA PÁGINA DE PERFIL
+   Empilha verticalmente todos os blocos do perfil.
+══════════════════════════════════════════════ */
+.profile-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+
+/* ══════════════════════════════════════════════
+   HERO CARD
+   Card principal: banner (topo) + body (avatar + info).
+   overflow:hidden garante que o banner respeite o border-radius.
+══════════════════════════════════════════════ */
+.profile-hero {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-xl);
+  overflow: hidden;
+  box-shadow: var(--sh);
+}
+
+
+/* ══════════════════════════════════════════════
+   ZONA DO BANNER
+   Área clicável que cobre toda a largura do card.
+   O clique aciona o <input file> do banner via JS.
+   Exibe um overlay com hint no hover.
+══════════════════════════════════════════════ */
+.banner-zone {
+  position: relative;
+  height: 190px;
+  /* Gradiente padrão quando não há imagem de banner */
+  background:
+    linear-gradient(
+      135deg,
+      #1c1f2e 0%,
+      #263252 40%,
+      #1a2640 70%,
+      #111620 100%
+    );
+  cursor: pointer;
+  overflow: hidden;
+}
+
+/* Textura de grade sobre o banner para dar profundidade */
+.banner-zone::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 22px,
+    rgba(255, 255, 255, .025) 22px,
+    rgba(255, 255, 255, .025) 23px
+  );
+  pointer-events: none;
+}
+
+/* Imagem do banner (quando definida) */
+.banner-zone img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  position: absolute;
+  inset: 0;
+  /* Fica acima do ::after para cobrir a textura */
+  z-index: 1;
+}
+
+/* Overlay escuro com texto de hint — visível no hover */
+.banner-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, .42);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: #fff;
+  font-weight: 600;
+  font-size: .88rem;
+  opacity: 0;
+  transition: opacity var(--t);
+  /* Fica acima da imagem do banner */
+  z-index: 2;
+}
+
+.banner-zone:hover .banner-overlay {
+  opacity: 1;
+}
+
+/* Feedback visual ao arrastar arquivo sobre o banner */
+.banner-zone.drag-over {
+  outline: 3px dashed rgba(255,255,255,.6);
+  outline-offset: -6px;
+}
+
+
+/* ══════════════════════════════════════════════
+   BODY DO PERFIL
+   Área abaixo do banner: avatar flutuante + textos.
+══════════════════════════════════════════════ */
+.profile-body {
+  padding: 0 22px 22px;
+}
+
+
+/* ══════════════════════════════════════════════
+   AVATAR WRAPPER
+   O margin-top negativo faz o avatar "escalar" para
+   cima do banner — efeito característico de redes sociais.
+   position:relative permite posicionar o badge.
+══════════════════════════════════════════════ */
+.avatar-wrap {
+  position: relative;
+  display: inline-block;
+  margin-top: -40px;    /* metade da altura do avatar = sobreposição */
+  margin-bottom: 14px;
+}
+
+/*
+  AVATAR GRANDE — foto de perfil
+  Borda branca separa o avatar do banner.
+  Clique aciona o input file do avatar.
+*/
+.profile-ava-big {
+  width: 82px;
+  height: 82px;
+  border-radius: 50%;
+  background: var(--ink);
+  color: #fff;
+  font-weight: 800;
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* Borda branca para separar do banner */
+  border: 4px solid var(--surface);
+  overflow: hidden;
+  cursor: pointer;
+  box-shadow: 0 2px 12px rgba(0,0,0,.18);
+  transition: box-shadow var(--t), transform var(--t);
+  user-select: none;
+  position: relative;    /* contexto para pseudo-elemento */
+  z-index: 3;
+}
+
+.profile-ava-big:hover {
+  box-shadow: 0 4px 20px rgba(0,0,0,.28);
+  transform: scale(1.04);
+}
+
+/* Overlay escuro com hint ao passar o mouse */
+.profile-ava-big::after {
+  content: '📷';
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  opacity: 0;
+  transition: opacity var(--t);
+  border-radius: 50%;
+}
+
+.profile-ava-big:hover::after {
+  opacity: 1;
+}
+
+/* A foto dentro do avatar preenche o círculo */
+.profile-ava-big img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+/*
+  BADGE DE EDIÇÃO (lápis)
+  Círculo pequeno posicionado sobre o canto inferior
+  direito do avatar, indicando que é editável.
+*/
+.ava-edit-badge {
+  position: absolute;
+  bottom: 3px;
+  right: 3px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 2px solid var(--surface);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  pointer-events: none;    /* não interfere no clique do avatar */
+  z-index: 4;
+}
+
+
+/* ══════════════════════════════════════════════
+   INFORMAÇÕES DO PERFIL
+══════════════════════════════════════════════ */
+
+/* Linha: bloco de info + botão editar */
+.profile-name-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;    /* em telas pequenas, o botão cai para baixo */
+}
+
+.profile-info {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Nome do usuário */
+.p-name {
+  font-size: 1.35rem;
+  font-weight: 800;
+  letter-spacing: -.025em;
+  line-height: 1.2;
+}
+
+/* Subtítulo (cargo/tipo) */
+.p-role {
+  font-size: .78rem;
+  color: var(--ink-3);
+  margin-top: 3px;
+}
+
+/* Bio do usuário */
+.p-bio {
+  font-family: var(--font-body);
+  font-size: .9rem;
+  color: var(--ink-2);
+  line-height: 1.55;
+  margin-top: 10px;
+  max-width: 420px;
+}
+
+
+/* ══════════════════════════════════════════════
+   ESTATÍSTICAS
+   Grade de dois cards com número + label.
+══════════════════════════════════════════════ */
+.stats-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.stat-box {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: 20px 24px;
+  box-shadow: var(--sh);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  transition: border-color var(--t), box-shadow var(--t);
+}
+
+.stat-box:hover {
+  border-color: var(--border-2);
+  box-shadow: var(--sh-lg);
+}
+
+/* Número grande em azul */
+.stat-num {
+  font-size: 2.1rem;
+  font-weight: 800;
+  letter-spacing: -.04em;
+  color: var(--accent);
+  line-height: 1;
+}
+
+/* Rótulo abaixo do número */
+.stat-lbl {
+  font-size: .76rem;
+  color: var(--ink-3);
+  font-weight: 500;
+}
+
+
+/* ══════════════════════════════════════════════
+   CABEÇALHO DE SEÇÃO
+   Linha com título e divisor horizontal.
+   Ex: "Suas postagens ─────────────────────"
+══════════════════════════════════════════ */
+.section-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.section-title {
+  font-size: .72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: var(--ink-3);
+  white-space: nowrap;
+}
+
+/* Linha que se expande para ocupar o espaço restante */
+.section-divider {
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+/*
+ * ╔══════════════════════════════════════════════════════════════╗
+ * ║  animations.css — Keyframes e Transições                    ║
+ * ║                                                              ║
+ * ║  Todas as animações do projeto ficam aqui.                  ║
+ * ║  Usar animation-delay escalonado nos filhos cria um          ║
+ * ║  efeito de "stagger" (cascata) agradável ao carregar.        ║
+ * ╚══════════════════════════════════════════════════════════════╝
+ */
+
+
+/* ══════════════════════════════════════════════
+   KEYFRAMES
+
+   fadeUp     → entra de baixo para cima com fade (cards, painéis)
+   fadeIn     → apenas fade de opacidade (overlays, backdrops)
+   slideUp    → entra de baixo com scale e bounce (modais)
+   shimmer    → loading skeleton effect (não usado agora, mas disponível)
+══════════════════════════════════════════════ */
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* Animação dos modais: elástica (cubic-bezier com overshoot) */
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Shimmer para estados de carregamento */
+@keyframes shimmer {
+  from { background-position: -200% center; }
+  to   { background-position:  200% center; }
+}
+
+
+/* ══════════════════════════════════════════════
+   DELAY ESCALONADO DOS POST CARDS
+   Cada card entra com um atraso progressivo,
+   criando efeito de "stagger" na listagem inicial.
+   Apenas os 8 primeiros são animados com stagger;
+   os demais entram sem delay.
+══════════════════════════════════════════════ */
+.feed-list .post-card:nth-child(1)  { animation-delay:   0ms; }
+.feed-list .post-card:nth-child(2)  { animation-delay:  50ms; }
+.feed-list .post-card:nth-child(3)  { animation-delay: 100ms; }
+.feed-list .post-card:nth-child(4)  { animation-delay: 150ms; }
+.feed-list .post-card:nth-child(5)  { animation-delay: 180ms; }
+.feed-list .post-card:nth-child(6)  { animation-delay: 210ms; }
+.feed-list .post-card:nth-child(7)  { animation-delay: 230ms; }
+.feed-list .post-card:nth-child(8)  { animation-delay: 250ms; }
+
+
+/* ══════════════════════════════════════════════
+   RESPEITO A preferências de acessibilidade
+   Usuários que pedem "reduced motion" veem
+   transições mínimas sem movimento.
+══════════════════════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+</style>
+
+
+<!--
+  APP SHELL
+  ─────────
+  Contém três áreas distintas:
+    1. .rail       – barra lateral de navegação (desktop)
+    2. .center-col – coluna central com o conteúdo das abas
+    3. .bottom-bar – barra inferior de navegação (mobile)
+-->
+<div class="app-shell">
+
+  <!-- ══════════════════════════════════════
+       RAIL — navegação lateral (desktop)
+  ══════════════════════════════════════ -->
+  <nav class="rail" id="rail" role="navigation" aria-label="Navegação principal">
+
+    <div class="rail-logo" title="Daily Study">DS</div>
+
+    <!-- Botão Feed -->
+    <button
+      class="rail-btn active"
+      data-tab="feed"
+      aria-label="Feed"
+      aria-current="page"
+    >
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+           stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+        <polyline points="9 22 9 12 15 12 15 22"/>
+      </svg>
+      <span class="rail-tooltip">Feed</span>
+    </button>
+
+    <!-- Botão Perfil -->
+    <button
+      class="rail-btn"
+      data-tab="profile"
+      aria-label="Perfil"
+    >
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+           stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+        <circle cx="12" cy="7" r="4"/>
+      </svg>
+      <span class="rail-tooltip">Perfil</span>
+    </button>
+
+  </nav>
+
+
+  <!-- ══════════════════════════════════════
+       COLUNA CENTRAL — conteúdo das abas
+  ══════════════════════════════════════ -->
+  <main class="center-col" role="main">
+
+
+    <!-- ─────────────────────────────────────
+         ABA: FEED
+         Compose box para criar posts
+         + lista de posts em ordem cronológica
+    ───────────────────────────────────────── -->
+    <section
+      class="tab-panel active"
+      id="tab-feed"
+      role="tabpanel"
+    >
+
+      <!-- Topo do feed: título + contador de posts -->
+      <div class="feed-top">
+        <h1 class="feed-title">Feed</h1>
+        <span class="post-badge" id="postBadge" aria-live="polite">0 posts</span>
+      </div>
+
+
+      <!--
+        COMPOSE BOX
+        ────────────
+        Área de criação de novo post.
+        Contém avatar, textarea, upload de imagem,
+        contador de caracteres e botão publicar.
+        O botão "Publicar" fica desabilitado até haver texto.
+        Atalho de teclado: Ctrl+Enter / Cmd+Enter.
+      -->
+      <div class="compose" id="compose">
+        <div class="compose-row">
+
+          <!-- Avatar (clique leva à aba de perfil) -->
+          <div
+            class="compose-ava"
+            id="composeAva"
+            role="button"
+            tabindex="0"
+            title="Ver perfil"
+            aria-label="Seu avatar"
+          ></div>
+
+          <!-- Corpo do compose -->
+          <div class="compose-body">
+
+            <!-- Textarea principal -->
+            <textarea
+              id="postInput"
+              class="compose-ta"
+              placeholder="O que você está estudando hoje?"
+              maxlength="500"
+              rows="3"
+              aria-label="Texto da postagem"
+            ></textarea>
+
+            <!--
+              Pré-visualização da imagem selecionada
+              Aparece somente após o usuário escolher uma imagem.
+              Botão ✕ remove a imagem e limpa o input file.
+            -->
+            <div id="composeImgPreview" class="compose-img-preview hidden">
+              <img id="composePreviewImg" src="" alt="Prévia da imagem"/>
+              <button
+                class="remove-img-btn"
+                id="removeImgBtn"
+                title="Remover imagem"
+                aria-label="Remover imagem selecionada"
+              >✕</button>
+            </div>
+
+            <!-- Rodapé: ferramentas à esquerda | contador + publicar à direita -->
+            <div class="compose-foot">
+
+              <!-- Ferramenta de upload de imagem -->
+              <div class="compose-tools">
+                <!--
+                  O <label> funciona como botão e aciona o <input file> oculto.
+                  Aceita apenas imagens. O arquivo selecionado é convertido para
+                  Base64 (Data URL) via FileReader e guardado no localStorage.
+                -->
+                <label
+                  for="imgInput"
+                  class="tool-btn img-tool-btn"
+                  title="Anexar imagem ao post"
+                  aria-label="Selecionar imagem"
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                       stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <rect x="3" y="3" width="18" height="18" rx="2"/>
+                    <circle cx="8.5" cy="8.5" r="1.5"/>
+                    <polyline points="21 15 16 10 5 21"/>
+                  </svg>
+                  <span>Imagem</span>
+                </label>
+                <!-- Input file OCULTO via CSS (display:none em reset.css) -->
+                <input type="file" id="imgInput" accept="image/*" aria-hidden="true"/>
+              </div>
+
+              <!-- Contador + botão publicar -->
+              <div class="compose-right">
+                <span
+                  class="char-counter"
+                  id="charCount"
+                  aria-live="polite"
+                >500</span>
+                <button
+                  class="btn-post"
+                  id="btnPost"
+                  disabled
+                  aria-label="Publicar postagem (Ctrl+Enter)"
+                >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+                       stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+                    <line x1="22" y1="2" x2="11" y2="13"/>
+                    <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+                  </svg>
+                  Publicar
+                </button>
+              </div>
+
+            </div><!-- /compose-foot -->
+          </div><!-- /compose-body -->
+        </div><!-- /compose-row -->
+      </div><!-- /compose -->
+
+
+      <!-- Lista de posts injetada pelo JS (Posts.renderFeed) -->
+      <div class="feed-list" id="feedList" role="feed" aria-label="Postagens"></div>
+
+      <!-- Estado vazio: visível quando não há nenhum post -->
+      <div class="empty-state hidden" id="feedEmpty" role="status">
+        <div class="empty-ico" aria-hidden="true">📚</div>
+        <h3>Nenhuma postagem ainda</h3>
+        <p>Compartilhe o que você está estudando hoje!</p>
+      </div>
+
+    </section><!-- /tab-feed -->
+
+
+    <!-- ─────────────────────────────────────
+         ABA: PERFIL
+         Banner + avatar + nome/bio
+         + formulário de edição
+         + estatísticas
+         + posts do usuário
+    ───────────────────────────────────────── -->
+    <section
+      class="tab-panel"
+      id="tab-profile"
+      role="tabpanel"
+    >
+      <div class="profile-wrap">
+
+
+        <!--
+          HERO CARD
+          ──────────
+          Card principal do perfil.
+          Estrutura: banner (zona clicável) + body (avatar flutuando + info).
+          O avatar tem margin-top negativo para se sobrepor ao banner.
+          Clicar no banner ou no avatar abre o seletor de arquivo correspondente.
+        -->
+        <div class="profile-hero">
+
+          <!-- BANNER — área clicável que aciona o input de banner -->
+          <div
+            class="banner-zone"
+            id="bannerZone"
+            role="button"
+            tabindex="0"
+            aria-label="Banner do perfil. Clique para trocar."
+          >
+            <!-- Imagem do banner (oculta até ser definida) -->
+            <img id="bannerImg" src="" alt="Banner do perfil" class="hidden"/>
+            <!-- Hint de edição visível no hover -->
+            <div class="banner-overlay" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                   stroke="currentColor" stroke-width="2">
+                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+                <circle cx="12" cy="13" r="4"/>
+              </svg>
+              Trocar banner
+            </div>
+            <!-- Input file para o banner (oculto) -->
+            <input type="file" id="bannerInput" accept="image/*" aria-hidden="true"/>
+          </div>
+
+          <!-- Body do perfil (avatar + textos + botão editar) -->
+          <div class="profile-body">
+
+            <!--
+              Wrapper do avatar.
+              margin-top negativo faz o avatar "flutuar" sobre o banner.
+              O badge de edição (lápis) fica posicionado absolutamente.
+            -->
+            <div class="avatar-wrap">
+              <div
+                class="profile-ava-big"
+                id="profileAvaBig"
+                role="button"
+                tabindex="0"
+                aria-label="Foto de perfil. Clique para trocar."
+              ></div>
+              <!-- Badge de lápis sobre o avatar -->
+              <div class="ava-edit-badge" aria-hidden="true">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" stroke-width="2.5">
+                  <path d="M12 20h9"/>
+                  <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/>
+                </svg>
+              </div>
+              <!-- Input file para o avatar (oculto) -->
+              <input type="file" id="avatarInput" accept="image/*" aria-hidden="true"/>
+            </div>
+
+            <!-- Linha: info do perfil + botão editar -->
+            <div class="profile-name-row">
+              <div class="profile-info">
+                <div class="p-name" id="pName">Carregando…</div>
+                <div class="p-role">Estudante · Daily Study</div>
+                <div class="p-bio" id="pBio"></div>
+              </div>
+              <button class="btn-edit-p" id="btnEditP">Editar perfil</button>
+            </div>
+
+          </div><!-- /profile-body -->
+        </div><!-- /profile-hero -->
+
+
+        <!--
+          FORMULÁRIO DE EDIÇÃO DO PERFIL
+          ──────────────────────────────
+          Oculto por padrão (.hidden).
+          Exibido ao clicar em "Editar perfil".
+          Campos: nome e bio.
+          Salvar → Profile.save() → sincroniza UI + localStorage.
+        -->
+        <div class="edit-form hidden" id="editForm" role="form" aria-label="Editar perfil">
+          <h3>Editar Perfil</h3>
+
+          <div class="form-field">
+            <label for="eName">Nome</label>
+            <input
+              type="text"
+              id="eName"
+              maxlength="50"
+              placeholder="Seu nome completo"
+            />
+          </div>
+
+          <div class="form-field">
+            <label for="eBio">Biografia</label>
+            <textarea
+              id="eBio"
+              rows="3"
+              maxlength="200"
+              placeholder="Fale um pouco sobre você e seus estudos…"
+            ></textarea>
+          </div>
+
+          <div class="form-actions">
+            <button class="btn-secondary" id="btnCancelEdit">Cancelar</button>
+            <button class="btn-primary"   id="btnSaveEdit">Salvar</button>
+          </div>
+        </div><!-- /edit-form -->
+
+
+        <!-- ESTATÍSTICAS: total de posts + dias únicos ativos -->
+        <div class="stats-row" role="region" aria-label="Estatísticas">
+          <div class="stat-box">
+            <span class="stat-num" id="statPosts">0</span>
+            <span class="stat-lbl">Postagens</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-num" id="statDays">0</span>
+            <span class="stat-lbl">Dias ativos</span>
+          </div>
+        </div>
+
+
+        <!-- POSTS DO PERFIL (mesmos posts do feed, reexibidos aqui) -->
+        <div role="region" aria-label="Suas postagens">
+          <div class="section-head">
+            <span class="section-title">Suas postagens</span>
+            <div class="section-divider" aria-hidden="true"></div>
+          </div>
+          <div class="feed-list" id="profileFeed" role="feed"></div>
+          <div class="empty-state hidden" id="profileEmpty" role="status">
+            <div class="empty-ico" aria-hidden="true">✏️</div>
+            <h3>Sem postagens ainda</h3>
+            <p>Publique algo no feed!</p>
+          </div>
+        </div>
+
+
+      </div><!-- /profile-wrap -->
+    </section><!-- /tab-profile -->
+
+
+  </main><!-- /center-col -->
+
+
+  <!-- ══════════════════════════════════════
+       BOTTOM BAR — navegação mobile (≤640px)
+  ══════════════════════════════════════ -->
+  <nav class="bottom-bar" id="bottomBar" role="navigation" aria-label="Navegação mobile">
+    <button class="bottom-btn active" data-tab="feed" aria-label="Feed" aria-current="page">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+           stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+        <polyline points="9 22 9 12 15 12 15 22"/>
+      </svg>
+      Feed
+    </button>
+    <button class="bottom-btn" data-tab="profile" aria-label="Perfil">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+           stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+        <circle cx="12" cy="7" r="4"/>
+      </svg>
+      Perfil
+    </button>
+  </nav>
+
+</div><!-- /app-shell -->
+
+
+<!-- ══════════════════════════════════════════════════════════
+     MODAL DE EDIÇÃO DE POST
+     Exibido ao clicar em "editar" em qualquer post.
+     Permite alterar o texto do post (a imagem permanece).
+══════════════════════════════════════════════════════════ -->
+<div
+  class="modal-backdrop hidden"
+  id="modalBackdrop"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="modalTitle"
+>
+  <div class="modal">
+    <div class="modal-head">
+      <h3 id="modalTitle">Editar postagem</h3>
+      <button class="modal-close-btn" id="modalCloseBtn" aria-label="Fechar">✕</button>
+    </div>
+    <textarea
+      id="editTa"
+      class="modal-ta"
+      maxlength="500"
+      rows="5"
+      aria-label="Novo texto da postagem"
+    ></textarea>
+    <div class="modal-foot">
+      <span class="char-counter" id="editCount" aria-live="polite">500</span>
+      <div class="modal-actions">
+        <button class="btn-secondary" id="modalCancelBtn">Cancelar</button>
+        <button class="btn-primary"   id="modalSaveBtn">Salvar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     LIGHTBOX DE IMAGEM
+     Abre ao clicar em qualquer imagem de post.
+     Clique fora ou no botão ✕ fecha.
+══════════════════════════════════════════════════════════ -->
+<div
+  class="lightbox hidden"
+  id="lightbox"
+  role="dialog"
+  aria-modal="true"
+  aria-label="Visualizador de imagem"
+>
+  <button class="lightbox-close" id="lightboxClose" aria-label="Fechar imagem">✕</button>
+  <img id="lightboxImg" src="" alt="Imagem em tamanho original"/>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     TOAST — Notificação flutuante de feedback
+     aria-live="polite" anuncia para leitores de tela.
+══════════════════════════════════════════════════════════ -->
+<div class="toast" id="toast" role="alert" aria-live="polite" aria-atomic="true"></div>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     SCRIPTS — carregados ao final do body para não bloquear render.
+     Ordem de carregamento OBRIGATÓRIA (cada módulo depende do anterior):
+       storage.js  →  profile.js  →  posts.js  →  ui.js  →  app.js
+══════════════════════════════════════════════════════════ -->
+
+
+
+
+
+
+
+<script>
+/**
+ * ╔══════════════════════════════════════════════════════════════╗
+ * ║  storage.js — Camada de Persistência (localStorage)         ║
+ * ║                                                              ║
+ * ║  Toda leitura e escrita no localStorage fica centralizada   ║
+ * ║  aqui. Os outros módulos NUNCA acessam localStorage         ║
+ * ║  diretamente — usam sempre este módulo.                      ║
+ * ║                                                              ║
+ * ║  Isso facilita trocar por uma API real no futuro:            ║
+ * ║  basta alterar apenas este arquivo.                          ║
+ * ║                                                              ║
+ * ║  ATENÇÃO SOBRE IMAGENS:                                      ║
+ * ║  Imagens são salvas como Data URLs (Base64).                 ║
+ * ║  Isso funciona para imagens pequenas/médias,                 ║
+ * ║  mas o localStorage tem limite de ~5MB por origem.           ║
+ * ║  Para produção, use um servidor ou IndexedDB.                ║
+ * ╚══════════════════════════════════════════════════════════════╝
+ *
+ * @module Storage
+ * @exports {Object} Storage — API pública com métodos para posts e perfil
+ */
+
+const Storage = (() => {
+
+  // ─────────────────────────────────────────────
+  // CHAVES DO localStorage
+  // Centralizar aqui evita erros de typo
+  // ─────────────────────────────────────────────
+  const KEYS = {
+    POSTS:   'ds_posts',    // Array de objetos de post
+    PROFILE: 'ds_profile',  // Objeto com dados do perfil
+  };
+
+
+  // ═══════════════════════════════════════════
+  // MÉTODOS DE POSTS
+  // ═══════════════════════════════════════════
+
+  /**
+   * Retorna todos os posts salvos, ordenados do mais novo para o mais antigo.
+   * (A ordem cronológica decrescente é mantida pois cada novo post é inserido
+   *  no início do array com unshift.)
+   *
+   * @returns {Array<PostObject>} Array de posts (pode ser vazio)
+   *
+   * @typedef  {Object}  PostObject
+   * @property {string}  id         UUID único do post
+   * @property {string}  text       Texto do post
+   * @property {string|null} image  Data URL da imagem ou null
+   * @property {string}  createdAt  ISO 8601 da criação
+   * @property {string|null} editedAt ISO 8601 da última edição ou null
+   */
+  function getPosts() {
+    try {
+      const raw = localStorage.getItem(KEYS.POSTS);
+      return raw ? JSON.parse(raw) : [];
+    } catch (err) {
+      // Se o JSON estiver corrompido, retorna array vazio
+      console.error('[Storage] Erro ao ler posts:', err);
+      return [];
+    }
+  }
+
+  /**
+   * Substitui o array inteiro de posts no localStorage.
+   * Uso interno — os consumidores usam addPost / editPost / deletePost.
+   *
+   * @param {Array<PostObject>} posts
+   */
+  function savePosts(posts) {
+    try {
+      localStorage.setItem(KEYS.POSTS, JSON.stringify(posts));
+    } catch (err) {
+      // Pode acontecer se localStorage estiver cheio (quota exceeded)
+      console.error('[Storage] Erro ao salvar posts:', err);
+      throw new Error('Armazenamento cheio. Exclua alguns posts com imagens.');
+    }
+  }
+
+  /**
+   * Cria um novo post, insere no início do array (ordem desc)
+   * e salva no localStorage.
+   *
+   * @param {string}      text           Texto da postagem (obrigatório)
+   * @param {string|null} imageDataUrl   Data URL da imagem ou null
+   * @returns {PostObject} O post recém-criado
+   */
+  function addPost(text, imageDataUrl = null) {
+    const posts = getPosts();
+
+    const post = {
+      id:        crypto.randomUUID(),  // ID único nativo do browser
+      text:      text.trim(),
+      image:     imageDataUrl,         // Base64 ou null
+      createdAt: new Date().toISOString(),
+      editedAt:  null,
+    };
+
+    // unshift() insere no início → mais novo fica primeiro
+    posts.unshift(post);
+    savePosts(posts);
+
+    return post;
+  }
+
+  /**
+   * Atualiza o texto de um post existente pelo seu ID.
+   * Registra a data/hora da edição em editedAt.
+   *
+   * @param {string} id       ID do post a editar
+   * @param {string} newText  Novo texto
+   * @returns {PostObject|null} Post atualizado ou null se não encontrado
+   */
+  function editPost(id, newText) {
+    const posts = getPosts();
+    const index = posts.findIndex(p => p.id === id);
+
+    if (index === -1) {
+      console.warn('[Storage] editPost: post não encontrado:', id);
+      return null;
+    }
+
+    posts[index].text     = newText.trim();
+    posts[index].editedAt = new Date().toISOString();
+
+    savePosts(posts);
+    return posts[index];
+  }
+
+  /**
+   * Remove um post pelo ID.
+   *
+   * @param {string} id  ID do post a excluir
+   */
+  function deletePost(id) {
+    const posts    = getPosts();
+    const filtered = posts.filter(p => p.id !== id);
+    savePosts(filtered);
+  }
+
+
+  // ═══════════════════════════════════════════
+  // MÉTODOS DE PERFIL
+  // ═══════════════════════════════════════════
+
+  /**
+   * Perfil padrão exibido na primeira execução.
+   * @type {ProfileObject}
+   */
+  const DEFAULT_PROFILE = {
+    name:        'João da Silva',
+    bio:         'Apaixonado por aprender. Sempre estudando algo novo a cada dia.',
+    avatarUrl:   null,   // Data URL da foto de perfil
+    bannerUrl:   null,   // Data URL do banner
+  };
+
+  /**
+   * Retorna o perfil do usuário salvo.
+   * Se não houver perfil salvo, retorna o perfil padrão.
+   *
+   * @returns {ProfileObject}
+   *
+   * @typedef  {Object}      ProfileObject
+   * @property {string}      name       Nome do usuário
+   * @property {string}      bio        Biografia
+   * @property {string|null} avatarUrl  Data URL do avatar ou null
+   * @property {string|null} bannerUrl  Data URL do banner ou null
+   */
+  function getProfile() {
+    try {
+      const raw = localStorage.getItem(KEYS.PROFILE);
+      // Mescla com DEFAULT_PROFILE para garantir que novas propriedades
+      // adicionadas no futuro tenham valor padrão em perfis antigos
+      return raw ? { ...DEFAULT_PROFILE, ...JSON.parse(raw) } : { ...DEFAULT_PROFILE };
+    } catch (err) {
+      console.error('[Storage] Erro ao ler perfil:', err);
+      return { ...DEFAULT_PROFILE };
+    }
+  }
+
+  /**
+   * Salva (substitui) o perfil do usuário.
+   *
+   * @param {ProfileObject} profile  Objeto com os dados do perfil
+   */
+  function saveProfile(profile) {
+    try {
+      localStorage.setItem(KEYS.PROFILE, JSON.stringify(profile));
+    } catch (err) {
+      console.error('[Storage] Erro ao salvar perfil:', err);
+      throw new Error('Armazenamento cheio. A imagem pode ser muito grande.');
+    }
+  }
+
+  /**
+   * Atualiza parcialmente o perfil (merge com o existente).
+   * Útil para atualizar apenas o avatar sem mexer no nome/bio, etc.
+   *
+   * @param {Partial<ProfileObject>} partial  Campos a atualizar
+   * @returns {ProfileObject} Perfil completo após atualização
+   */
+  function patchProfile(partial) {
+    const current = getProfile();
+    const updated = { ...current, ...partial };
+    saveProfile(updated);
+    return updated;
+  }
+
+
+  // ─────────────────────────────────────────────
+  // API PÚBLICA DO MÓDULO
+  // ─────────────────────────────────────────────
+  return {
+    // Posts
+    getPosts,
+    addPost,
+    editPost,
+    deletePost,
+
+    // Perfil
+    getProfile,
+    saveProfile,
+    patchProfile,
+  };
+
+})();
+/**
+ * ╔══════════════════════════════════════════════════════════════╗
+ * ║  profile.js — Módulo de Perfil do Usuário                   ║
+ * ║                                                              ║
+ * ║  Responsável por:                                            ║
+ * ║    • Ler e exibir os dados do perfil (nome, bio, avatar)     ║
+ * ║    • Gerenciar uploads de foto de perfil e banner            ║
+ * ║    • Controlar o formulário de edição de nome/bio            ║
+ * ║    • Sincronizar o perfil com todos os elementos de UI       ║
+ * ║                                                              ║
+ * ║  Dependências: storage.js (deve ser carregado antes)         ║
+ * ╚══════════════════════════════════════════════════════════════╝
+ *
+ * @module Profile
+ * @exports {Object} Profile — API pública
+ */
+
+const Profile = (() => {
+
+  // ═══════════════════════════════════════════
+  // HELPERS INTERNOS
+  // ═══════════════════════════════════════════
+
+  /**
+   * Gera as iniciais de um nome para uso como fallback do avatar.
+   * Pega a primeira letra do primeiro nome e a primeira do último.
+   *
+   * @param  {string} name  Nome completo
+   * @returns {string}      Ex: "João da Silva" → "JS" | "Ana" → "A"
+   */
+  function getInitials(name) {
+    const parts = (name || 'U').trim().split(/\s+/).filter(Boolean);
+    if (parts.length === 1) return parts[0][0].toUpperCase();
+    return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+  }
+
+  /**
+   * Define o conteúdo de um avatar:
+   *   • Se há uma imageUrl: insere <img> dentro do elemento
+   *   • Caso contrário: exibe as iniciais como texto
+   *
+   * @param {HTMLElement}   el        Elemento do avatar (.post-ava, .compose-ava…)
+   * @param {string}        name      Nome do usuário (para iniciais)
+   * @param {string|null}   imageUrl  Data URL da foto ou null
+   */
+  function setAvatarContent(el, name, imageUrl) {
+    if (!el) return;
+    el.innerHTML = ''; // limpa conteúdo anterior
+
+    if (imageUrl) {
+      const img = document.createElement('img');
+      img.src = imageUrl;
+      img.alt = `Foto de ${name}`;
+      el.appendChild(img);
+    } else {
+      el.textContent = getInitials(name);
+    }
+  }
+
+  /**
+   * Lê um arquivo de imagem e retorna uma Promise com a Data URL (Base64).
+   * Usado para converter arquivos selecionados em strings armazenáveis.
+   *
+   * @param  {File}    file  Arquivo de imagem
+   * @returns {Promise<string>} Data URL (ex: "data:image/jpeg;base64,...")
+   */
+  function fileToDataUrl(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload  = e => resolve(e.target.result);
+      reader.onerror = () => reject(new Error('Falha ao ler a imagem.'));
+      reader.readAsDataURL(file); // converte para Base64
+    });
+  }
+
+
+  // ═══════════════════════════════════════════
+  // SINCRONIZAÇÃO DE UI
+  // ═══════════════════════════════════════════
+
+  /**
+   * Sincroniza TODOS os elementos de UI com os dados atuais do perfil.
+   * Deve ser chamado após qualquer alteração no perfil.
+   * Atualiza: avatar do compose, avatar grande, nome, bio, banner.
+   */
+  function syncUI() {
+    const p = Storage.getProfile();
+    const { name, bio, avatarUrl, bannerUrl } = p;
+
+    // ── Avatar pequeno (compose box) ──────────────────
+    const composeAva = document.getElementById('composeAva');
+    setAvatarContent(composeAva, name, avatarUrl);
+
+    // ── Avatar grande (aba de perfil) ─────────────────
+    const profileAvaBig = document.getElementById('profileAvaBig');
+    setAvatarContent(profileAvaBig, name, avatarUrl);
+
+    // ── Nome ──────────────────────────────────────────
+    const pNameEl = document.getElementById('pName');
+    if (pNameEl) pNameEl.textContent = name;
+
+    // ── Bio ───────────────────────────────────────────
+    const pBioEl = document.getElementById('pBio');
+    if (pBioEl) pBioEl.textContent = bio || '';
+
+    // ── Banner ────────────────────────────────────────
+    const bannerImg = document.getElementById('bannerImg');
+    if (bannerImg) {
+      if (bannerUrl) {
+        bannerImg.src = bannerUrl;
+        bannerImg.classList.remove('hidden');
+      } else {
+        bannerImg.src = '';
+        bannerImg.classList.add('hidden');
+      }
+    }
+  }
+
+
+  // ═══════════════════════════════════════════
+  // FORMULÁRIO DE EDIÇÃO
+  // ═══════════════════════════════════════════
+
+  /**
+   * Abre o formulário de edição, preenchido com os dados atuais.
+   * Oculta o botão "Editar perfil" enquanto o form está aberto.
+   */
+  function openEditForm() {
+    const p = Storage.getProfile();
+
+    // Preenche os campos com os valores atuais
+    const nameInput = document.getElementById('eName');
+    const bioInput  = document.getElementById('eBio');
+    if (nameInput) nameInput.value = p.name;
+    if (bioInput)  bioInput.value  = p.bio || '';
+
+    // Exibe o form e oculta o botão
+    document.getElementById('editForm').classList.remove('hidden');
+    document.getElementById('btnEditP').style.display = 'none';
+
+    // Foca no campo de nome para UX mais fluida
+    if (nameInput) nameInput.focus();
+  }
+
+  /**
+   * Fecha o formulário de edição sem salvar.
+   * Restaura a visibilidade do botão "Editar perfil".
+   */
+  function closeEditForm() {
+    document.getElementById('editForm').classList.add('hidden');
+    document.getElementById('btnEditP').style.display = '';
+  }
+
+  /**
+   * Valida e salva as alterações de nome e bio.
+   * Sincroniza a UI e re-renderiza o feed para atualizar o nome nos posts.
+   *
+   * @returns {boolean} true se salvou com sucesso
+   */
+  function saveEditForm() {
+    const nameVal = document.getElementById('eName').value.trim();
+    const bioVal  = document.getElementById('eBio').value.trim();
+
+    if (!nameVal) {
+      UI.showToast('O nome não pode estar vazio.', 'err');
+      document.getElementById('eName').focus();
+      return false;
+    }
+
+    // Atualiza apenas nome e bio (preserva avatarUrl e bannerUrl)
+    Storage.patchProfile({ name: nameVal, bio: bioVal });
+
+    syncUI();
+    closeEditForm();
+
+    // Re-renderiza posts para refletir o novo nome do autor
+    Posts.renderFeed();
+    Posts.renderProfilePosts();
+
+    UI.showToast('Perfil atualizado!', 'ok');
+    return true;
+  }
+
+
+  // ═══════════════════════════════════════════
+  // UPLOAD DE IMAGENS
+  // ═══════════════════════════════════════════
+
+  /**
+   * Processa um arquivo de imagem e o salva como avatar ou banner.
+   * Exibe feedback visual durante e após o processo.
+   *
+   * @param {File}   file   Arquivo de imagem selecionado
+   * @param {'avatar'|'banner'} type  Tipo de imagem a atualizar
+   */
+  async function handleImageUpload(file, type) {
+    if (!file) return;
+
+    // Valida o tipo de arquivo (apenas imagens)
+    if (!file.type.startsWith('image/')) {
+      UI.showToast('Por favor, selecione apenas imagens.', 'err');
+      return;
+    }
+
+    // Feedback de processamento
+    UI.showToast('Carregando imagem…');
+
+    try {
+      // Converte o arquivo para Base64
+      const dataUrl = await fileToDataUrl(file);
+
+      if (type === 'avatar') {
+        // Salva apenas o campo avatarUrl
+        Storage.patchProfile({ avatarUrl: dataUrl });
+        UI.showToast('Foto de perfil atualizada! 📸', 'ok');
+
+      } else if (type === 'banner') {
+        // Salva apenas o campo bannerUrl
+        Storage.patchProfile({ bannerUrl: dataUrl });
+        UI.showToast('Banner atualizado! 🖼️', 'ok');
+      }
+
+      // Sincroniza toda a UI com o novo dado
+      syncUI();
+
+    } catch (err) {
+      // Pode ser quota exceeded ou erro de leitura
+      console.error('[Profile] Erro ao fazer upload:', err);
+      UI.showToast(err.message || 'Erro ao carregar imagem.', 'err');
+    }
+  }
+
+
+  // ═══════════════════════════════════════════
+  // GETTERS PÚBLICOS
+  // ═══════════════════════════════════════════
+
+  /** Retorna o perfil atual do storage. */
+  function get() {
+    return Storage.getProfile();
+  }
+
+  /** Retorna as iniciais do nome atual. */
+  function getInitialsFromCurrent() {
+    return getInitials(Storage.getProfile().name);
+  }
+
+
+  // ─────────────────────────────────────────────
+  // API PÚBLICA
+  // ─────────────────────────────────────────────
+  return {
+    get,
+    getInitials,
+    getInitialsFromCurrent,
+    setAvatarContent,
+    fileToDataUrl,
+    syncUI,
+    openEditForm,
+    closeEditForm,
+    saveEditForm,
+    handleImageUpload,
+  };
+
+})();
+/**
+ * ╔══════════════════════════════════════════════════════════════╗
+ * ║  posts.js — Módulo de Postagens                             ║
+ * ║                                                              ║
+ * ║  Responsável por:                                            ║
+ * ║    • Renderizar o feed principal e o feed do perfil          ║
+ * ║    • Criar novos posts (texto + imagem opcional)             ║
+ * ║    • Abrir o modal de edição de texto                        ║
+ * ║    • Confirmar e executar a exclusão de posts                ║
+ * ║    • Atualizar contadores e estatísticas                     ║
+ * ║    • Gerenciar o contador de caracteres da textarea          ║
+ * ║                                                              ║
+ * ║  Dependências (devem ser carregados antes):                  ║
+ * ║    storage.js, profile.js                                    ║
+ * ╚══════════════════════════════════════════════════════════════╝
+ *
+ * @module Posts
+ * @exports {Object} Posts — API pública
+ */
+
+const Posts = (() => {
+
+  /**
+   * ID do post atualmente aberto no modal de edição.
+   * null quando o modal está fechado.
+   * @type {string|null}
+   */
+  let _editingPostId = null;
+
+  /**
+   * Data URL da imagem selecionada no compose box.
+   * null quando nenhuma imagem foi selecionada.
+   * @type {string|null}
+   */
+  let _pendingImageUrl = null;
+
+
+  // ═══════════════════════════════════════════
+  // HELPERS DE FORMATAÇÃO
+  // ═══════════════════════════════════════════
+
+  /**
+   * Formata uma string ISO 8601 para exibição amigável em português.
+   * Regras:
+   *   - Hoje:     "Hoje às 14:32"
+   *   - Ontem:    "Ontem às 09:05"
+   *   - Demais:   "15 de jan. às 09:00"
+   *
+   * @param  {string} isoString  Data no formato ISO (ex: "2024-01-15T14:32:00Z")
+   * @returns {string}           Data formatada
+   */
+  function formatDate(isoString) {
+    const date = new Date(isoString);
+    const now  = new Date();
+    const time = date.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+
+    // Compara apenas as datas (sem hora) convertendo para string
+    const dateStr      = date.toDateString();
+    const todayStr     = now.toDateString();
+    const yesterday    = new Date(now);
+    yesterday.setDate(now.getDate() - 1);
+    const yesterdayStr = yesterday.toDateString();
+
+    if (dateStr === todayStr)     return `Hoje às ${time}`;
+    if (dateStr === yesterdayStr) return `Ontem às ${time}`;
+
+    // Datas mais antigas: "15 de jan. às 09:00"
+    return date.toLocaleDateString('pt-BR', {
+      day:   'numeric',
+      month: 'short',
+    }) + ` às ${time}`;
+  }
+
+  /**
+   * Previne XSS escapando caracteres especiais de HTML.
+   * Sempre usar ao inserir texto do usuário no DOM via innerHTML.
+   *
+   * @param  {string} str  Texto não confiável
+   * @returns {string}     Texto com entidades HTML escapadas
+   */
+  function escapeHTML(str) {
+    const div = document.createElement('div');
+    div.appendChild(document.createTextNode(str));
+    return div.innerHTML;
+  }
+
+
+  // ═══════════════════════════════════════════
+  // RENDERIZAÇÃO DE CARDS
+  // ═══════════════════════════════════════════
+
+  /**
+   * Cria e retorna o elemento HTML (<article>) de um único post.
+   * Estrutura:
+   *   article.post-card
+   *     ├ .post-head (avatar + meta + botões de ação)
+   *     ├ .post-text (texto escapado)
+   *     ├ .post-image (se houver imagem)
+   *     ├ .post-edited-tag (se editado)
+   *     └ .post-footer (timestamp)
+   *
+   * Os event listeners de editar/excluir são adicionados aqui.
+   *
+   * @param  {PostObject} post  Objeto do post (ver storage.js para typedef)
+   * @returns {HTMLElement}     Elemento <article> pronto para inserção
+   */
+  function createPostElement(post) {
+    const profile  = Profile.get();
+    const initials = Profile.getInitials(profile.name);
+
+    const article = document.createElement('article');
+    article.className   = 'post-card';
+    article.dataset.id  = post.id;   // facilita seleções por ID
+
+    // ── Cabeçalho ─────────────────────────────────
+    const headHTML = `
+      <div class="post-head">
+
+        <!-- Avatar do autor -->
+        <div class="post-ava" data-action="profile" title="Ver perfil">
+          ${profile.avatarUrl
+            ? `<img src="${profile.avatarUrl}" alt="Foto de ${escapeHTML(profile.name)}"/>`
+            : escapeHTML(initials)
+          }
+        </div>
+
+        <!-- Meta: nome + data -->
+        <div class="post-meta">
+          <div class="post-author">${escapeHTML(profile.name)}</div>
+          <div class="post-date">${formatDate(post.createdAt)}</div>
+        </div>
+
+        <!-- Botões de ação (visíveis no hover via CSS) -->
+        <div class="post-actions" role="group" aria-label="Ações do post">
+
+          <!-- Editar: abre o modal de edição de texto -->
+          <button
+            class="pa-btn"
+            data-action="edit"
+            title="Editar postagem"
+            aria-label="Editar postagem"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+            </svg>
+          </button>
+
+          <!-- Excluir: pede confirmação antes de apagar -->
+          <button
+            class="pa-btn del"
+            data-action="delete"
+            title="Excluir postagem"
+            aria-label="Excluir postagem"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <polyline points="3 6 5 6 21 6"/>
+              <path d="M19 6l-1 14H6L5 6"/>
+              <path d="M10 11v6"/><path d="M14 11v6"/>
+              <path d="M9 6V4h6v2"/>
+            </svg>
+          </button>
+
+        </div><!-- /post-actions -->
+      </div><!-- /post-head -->
+    `;
+
+    // ── Texto ──────────────────────────────────────
+    // escapeHTML previne XSS; white-space:pre-wrap preserva quebras
+    const textHTML = `<p class="post-text">${escapeHTML(post.text)}</p>`;
+
+    // ── Imagem (opcional) ──────────────────────────
+    // A imagem é clicável para abrir o lightbox
+    const imageHTML = post.image
+      ? `<div class="post-image">
+           <img
+             src="${post.image}"
+             alt="Imagem da postagem"
+             data-action="lightbox"
+             title="Clique para ampliar"
+             loading="lazy"
+           />
+         </div>`
+      : '';
+
+    // ── Tag de editado (opcional) ──────────────────
+    const editedHTML = post.editedAt
+      ? `<p class="post-edited-tag">editado ${formatDate(post.editedAt)}</p>`
+      : '';
+
+    // ── Rodapé com timestamp ───────────────────────
+    const footerHTML = `
+      <div class="post-footer">
+        <time class="post-ts" datetime="${post.createdAt}">
+          ${new Date(post.createdAt).toLocaleString('pt-BR', {
+            day: 'numeric', month: 'short', year: 'numeric',
+            hour: '2-digit', minute: '2-digit',
+          })}
+        </time>
+      </div>
+    `;
+
+    // Monta o HTML completo do card
+    article.innerHTML = headHTML + textHTML + imageHTML + editedHTML + footerHTML;
+
+    // ── Event listeners via delegação ─────────────
+    // Um único listener no card captura cliques em todos os filhos.
+    // Identifica a ação pelo atributo data-action do elemento clicado.
+    article.addEventListener('click', e => {
+      const btn    = e.target.closest('[data-action]');
+      if (!btn) return;
+
+      const action = btn.dataset.action;
+
+      switch (action) {
+        case 'edit':
+          // Abre o modal com o texto atual do post
+          openEditModal(post.id, post.text);
+          break;
+
+        case 'delete':
+          // Pede confirmação antes de apagar (não há desfazer)
+          handleDelete(post.id);
+          break;
+
+        case 'lightbox':
+          // Abre a imagem em tela cheia
+          UI.openLightbox(post.image);
+          break;
+
+        case 'profile':
+          // Navega para a aba de perfil
+          UI.activateTab('profile');
+          break;
+      }
+    });
+
+    return article;
+  }
+
+
+  // ═══════════════════════════════════════════
+  // RENDERIZAÇÃO DE FEEDS
+  // ═══════════════════════════════════════════
+
+  /**
+   * Renderiza (ou re-renderiza) o feed principal.
+   * Limpa o container e reinserido todos os posts.
+   * Também atualiza o badge de contagem.
+   *
+   * Chamada em: inicialização, após publicar, editar ou excluir.
+   */
+  function renderFeed() {
+    const feedEl   = document.getElementById('feedList');
+    const emptyEl  = document.getElementById('feedEmpty');
+    const badgeEl  = document.getElementById('postBadge');
+    const posts    = Storage.getPosts();
+
+    // Limpa o feed atual
+    feedEl.innerHTML = '';
+
+    if (posts.length === 0) {
+      // Exibe estado vazio
+      emptyEl.classList.remove('hidden');
+      badgeEl.textContent = '0 posts';
+      return;
+    }
+
+    emptyEl.classList.add('hidden');
+    badgeEl.textContent = `${posts.length} post${posts.length !== 1 ? 's' : ''}`;
+
+    // Insere os cards; CSS anima a entrada com stagger
+    posts.forEach(post => {
+      feedEl.appendChild(createPostElement(post));
+    });
+  }
+
+  /**
+   * Renderiza (ou re-renderiza) a lista de posts na aba de perfil.
+   * Funciona exatamente como renderFeed, mas num container diferente.
+   *
+   * Chamada em: ativação da aba de perfil, após publicar/editar/excluir.
+   */
+  function renderProfilePosts() {
+    const container = document.getElementById('profileFeed');
+    const emptyEl   = document.getElementById('profileEmpty');
+    const posts     = Storage.getPosts();
+
+    container.innerHTML = '';
+
+    if (posts.length === 0) {
+      emptyEl.classList.remove('hidden');
+      return;
+    }
+
+    emptyEl.classList.add('hidden');
+    posts.forEach(post => {
+      container.appendChild(createPostElement(post));
+    });
+  }
+
+  /**
+   * Atualiza os dois cards de estatísticas na aba de perfil.
+   * - statPosts: total de posts
+   * - statDays:  número de dias únicos com pelo menos um post
+   */
+  function updateStats() {
+    const posts = Storage.getPosts();
+
+    // Total de posts
+    const statPostsEl = document.getElementById('statPosts');
+    if (statPostsEl) statPostsEl.textContent = posts.length;
+
+    // Dias únicos (converte createdAt para string de data e usa Set para deduplicar)
+    const uniqueDays = new Set(
+      posts.map(p => new Date(p.createdAt).toDateString())
+    );
+    const statDaysEl = document.getElementById('statDays');
+    if (statDaysEl) statDaysEl.textContent = uniqueDays.size;
+  }
+
+
+  // ═══════════════════════════════════════════
+  // AÇÕES DE POST
+  // ═══════════════════════════════════════════
+
+  /**
+   * Publica um novo post.
+   * Lê o texto da textarea e a imagem pendente (_pendingImageUrl).
+   * Valida, salva, re-renderiza e limpa o compose.
+   * Atalho: Ctrl+Enter / Cmd+Enter.
+   */
+  function handlePublish() {
+    const input = document.getElementById('postInput');
+    const text  = input.value.trim();
+
+    if (!text) return;  // botão deveria estar disabled, mas verificamos mesmo assim
+
+    try {
+      // Salva no localStorage (imagem pode ser null)
+      Storage.addPost(text, _pendingImageUrl);
+
+      // Limpa o compose box
+      input.value = '';
+      clearPendingImage();
+      updateCharCounter('charCount', input, 500);
+      document.getElementById('btnPost').disabled = true;
+
+      // Atualiza a UI
+      renderFeed();
+      updateStats();
+
+      UI.showToast('Postagem publicada! 🎉', 'ok');
+
+      // Scroll suave para o início do feed para ver o novo post
+      document.getElementById('feedList').scrollIntoView({
+        behavior: 'smooth',
+        block:    'start',
+      });
+
+    } catch (err) {
+      // Pode ser quota exceeded (imagem muito grande)
+      UI.showToast(err.message, 'err');
+    }
+  }
+
+  /**
+   * Abre o modal de edição preenchido com o texto atual do post.
+   * Armazena o ID do post em _editingPostId para uso no save.
+   *
+   * @param {string} postId      ID do post
+   * @param {string} currentText Texto atual do post
+   */
+  function openEditModal(postId, currentText) {
+    _editingPostId = postId;
+    const ta = document.getElementById('editTa');
+    ta.value = currentText;
+    updateCharCounter('editCount', ta, 500);
+    UI.openModal();
+    ta.focus();
+    ta.setSelectionRange(ta.value.length, ta.value.length); // cursor no fim
+  }
+
+  /**
+   * Salva a edição do post aberto no modal.
+   * Valida, atualiza no storage, fecha o modal e re-renderiza.
+   */
+  function handleSaveEdit() {
+    if (!_editingPostId) return;
+
+    const ta      = document.getElementById('editTa');
+    const newText = ta.value.trim();
+
+    if (!newText) {
+      UI.showToast('O texto não pode estar vazio.', 'err');
+      ta.focus();
+      return;
+    }
+
+    Storage.editPost(_editingPostId, newText);
+    _editingPostId = null;
+
+    UI.closeModal();
+    renderFeed();
+    renderProfilePosts();
+
+    UI.showToast('Postagem atualizada!', 'ok');
+  }
+
+  /**
+   * Exibe confirmação e, se aceita, exclui o post.
+   * Após excluir, re-renderiza o feed e as estatísticas.
+   *
+   * @param {string} postId  ID do post a excluir
+   */
+  function handleDelete(postId) {
+    // Confirmação nativa (simples, sem depender de UI extra)
+    if (!window.confirm('Deseja excluir esta postagem? Esta ação não pode ser desfeita.')) {
+      return;
+    }
+
+    Storage.deletePost(postId);
+    renderFeed();
+    renderProfilePosts();
+    updateStats();
+
+    UI.showToast('Postagem excluída.', 'err');
+  }
+
+
+  // ═══════════════════════════════════════════
+  // GESTÃO DE IMAGEM NO COMPOSE
+  // ═══════════════════════════════════════════
+
+  /**
+   * Processa a imagem selecionada no <input id="imgInput">.
+   * Converte para Base64, armazena em _pendingImageUrl
+   * e exibe a prévia abaixo da textarea.
+   *
+   * @param {File} file  Arquivo de imagem selecionado
+   */
+  async function handleComposeImage(file) {
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      UI.showToast('Por favor, selecione apenas imagens.', 'err');
+      return;
+    }
+
+    try {
+      UI.showToast('Carregando imagem…');
+
+      // Converte para Base64
+      const dataUrl = await Profile.fileToDataUrl(file);
+      _pendingImageUrl = dataUrl;
+
+      // Mostra a prévia
+      const previewEl = document.getElementById('composeImgPreview');
+      const previewImg = document.getElementById('composePreviewImg');
+      previewImg.src = dataUrl;
+      previewEl.classList.remove('hidden');
+
+      // Marca o botão de imagem como ativo
+      document.querySelector('.img-tool-btn').classList.add('has-image');
+
+      UI.showToast('Imagem pronta para publicar!', 'ok');
+
+    } catch (err) {
+      console.error('[Posts] Erro ao carregar imagem:', err);
+      UI.showToast('Erro ao carregar a imagem.', 'err');
+    }
+  }
+
+  /**
+   * Remove a imagem pendente do compose box.
+   * Limpa a prévia, reseta o input file e a variável interna.
+   */
+  function clearPendingImage() {
+    _pendingImageUrl = null;
+
+    // Esconde a prévia
+    const previewEl = document.getElementById('composeImgPreview');
+    if (previewEl) previewEl.classList.add('hidden');
+
+    const previewImg = document.getElementById('composePreviewImg');
+    if (previewImg) previewImg.src = '';
+
+    // Reseta o input file (permite selecionar o mesmo arquivo de novo)
+    const imgInput = document.getElementById('imgInput');
+    if (imgInput) imgInput.value = '';
+
+    // Remove o estado ativo do botão de imagem
+    const imgToolBtn = document.querySelector('.img-tool-btn');
+    if (imgToolBtn) imgToolBtn.classList.remove('has-image');
+  }
+
+
+  // ═══════════════════════════════════════════
+  // CONTADOR DE CARACTERES
+  // ═══════════════════════════════════════════
+
+  /**
+   * Atualiza o elemento de contador de caracteres para um textarea.
+   * Adiciona classes CSS de aviso (.warn e .danger) conforme o limite.
+   *
+   * @param {string}      counterId  ID do elemento span do contador
+   * @param {HTMLElement} inputEl    Elemento textarea
+   * @param {number}      maxLength  Limite máximo de caracteres
+   */
+  function updateCharCounter(counterId, inputEl, maxLength) {
+    const counterEl = document.getElementById(counterId);
+    if (!counterEl || !inputEl) return;
+
+    const remaining = maxLength - inputEl.value.length;
+    counterEl.textContent = remaining;
+
+    // Remove classes anteriores para recalcular
+    counterEl.classList.remove('warn', 'danger');
+
+    if (remaining <= 20)  counterEl.classList.add('danger');
+    else if (remaining <= 80) counterEl.classList.add('warn');
+  }
+
+
+  // ─────────────────────────────────────────────
+  // API PÚBLICA
+  // ─────────────────────────────────────────────
+  return {
+    renderFeed,
+    renderProfilePosts,
+    updateStats,
+    handlePublish,
+    openEditModal,
+    handleSaveEdit,
+    handleDelete,
+    handleComposeImage,
+    clearPendingImage,
+    updateCharCounter,
+  };
+
+})();
+/**
+ * ╔══════════════════════════════════════════════════════════════╗
+ * ║  ui.js — Módulo de Interface (UI)                           ║
+ * ║                                                              ║
+ * ║  Responsável por controle de estados de UI que não           ║
+ * ║  pertencem a um domínio específico:                          ║
+ * ║    • Sistema de abas (feed ↔ perfil)                        ║
+ * ║    • Modal de edição de post (abrir/fechar)                  ║
+ * ║    • Toast de notificação temporária                         ║
+ * ║    • Lightbox de imagem em tela cheia                        ║
+ * ║                                                              ║
+ * ║  Dependências: nenhuma (não importa outros módulos)          ║
+ * ╚══════════════════════════════════════════════════════════════╝
+ *
+ * @module UI
+ * @exports {Object} UI — API pública
+ */
+
+const UI = (() => {
+
+  // ═══════════════════════════════════════════
+  // SISTEMA DE ABAS
+  // ═══════════════════════════════════════════
+
+  /**
+   * Ativa uma aba pelo nome ('feed' ou 'profile').
+   * Atualiza:
+   *   1. Os painéis .tab-panel (adiciona/remove .active)
+   *   2. Os botões da rail lateral (.rail-btn)
+   *   3. Os botões da bottom-bar mobile (.bottom-btn)
+   *   4. O atributo aria-current para acessibilidade
+   * Ao ativar o perfil, re-renderiza posts e estatísticas.
+   *
+   * @param {'feed'|'profile'} tabName  Nome da aba a ativar
+   */
+  function activateTab(tabName) {
+    // ── Painéis ──────────────────────────────────
+    document.querySelectorAll('.tab-panel').forEach(panel => {
+      const isTarget = panel.id === `tab-${tabName}`;
+      panel.classList.toggle('active', isTarget);
+    });
+
+    // ── Botões de navegação (rail + bottom-bar) ───
+    document.querySelectorAll('[data-tab]').forEach(btn => {
+      const isTarget = btn.dataset.tab === tabName;
+      btn.classList.toggle('active', isTarget);
+      // Acessibilidade: indica a aba atual para leitores de tela
+      btn.setAttribute('aria-current', isTarget ? 'page' : 'false');
+    });
+
+    // ── Ações específicas por aba ─────────────────
+    if (tabName === 'profile') {
+      // Renderiza posts e atualiza stats ao entrar no perfil
+      Posts.renderProfilePosts();
+      Posts.updateStats();
+    }
+  }
+
+
+  // ═══════════════════════════════════════════
+  // MODAL DE EDIÇÃO DE POST
+  // ═══════════════════════════════════════════
+
+  /**
+   * Abre o modal de edição.
+   * Bloqueia o scroll da página (body) para evitar scroll duplo.
+   * Foca no textarea após a animação de abertura.
+   */
+  function openModal() {
+    const backdrop = document.getElementById('modalBackdrop');
+    backdrop.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';   // bloqueia scroll da página
+
+    // Foca no textarea após a animação (250ms = duração do slideUp)
+    setTimeout(() => {
+      document.getElementById('editTa').focus();
+    }, 260);
+  }
+
+  /**
+   * Fecha o modal de edição.
+   * Restaura o scroll da página.
+   */
+  function closeModal() {
+    const backdrop = document.getElementById('modalBackdrop');
+    backdrop.classList.add('hidden');
+    document.body.style.overflow = '';   // libera scroll da página
+  }
+
+
+  // ═══════════════════════════════════════════
+  // TOAST DE NOTIFICAÇÃO
+  // ═══════════════════════════════════════════
+
+  /**
+   * Timer do toast atual (para resetar se um novo toast for chamado
+   * antes do anterior terminar).
+   * @type {number|null}
+   */
+  let _toastTimer = null;
+
+  /**
+   * Exibe uma notificação de toast temporária na parte inferior da tela.
+   * Se já houver um toast visível, ele é substituído imediatamente.
+   *
+   * @param {string}              message  Texto a exibir
+   * @param {''|'ok'|'err'}       type     Estilo: '' (neutro), 'ok' (verde), 'err' (vermelho)
+   * @param {number}              duration Duração em ms (padrão: 2800)
+   */
+  function showToast(message, type = '', duration = 2800) {
+    const toast = document.getElementById('toast');
+
+    // Reseta timer anterior, se houver
+    if (_toastTimer) {
+      clearTimeout(_toastTimer);
+      _toastTimer = null;
+    }
+
+    // Define conteúdo e tipo
+    toast.textContent = message;
+    toast.className   = `toast show ${type}`.trim();
+
+    // Agenda o desaparecimento
+    _toastTimer = setTimeout(() => {
+      toast.classList.remove('show');
+      _toastTimer = null;
+    }, duration);
+  }
+
+
+  // ═══════════════════════════════════════════
+  // LIGHTBOX DE IMAGEM
+  // ═══════════════════════════════════════════
+
+  /**
+   * Abre o lightbox exibindo a imagem em tela cheia.
+   * Bloqueia o scroll da página durante a exibição.
+   *
+   * @param {string} imageSrc  URL ou Data URL da imagem
+   */
+  function openLightbox(imageSrc) {
+    const lightbox = document.getElementById('lightbox');
+    const lbImg    = document.getElementById('lightboxImg');
+
+    lbImg.src = imageSrc;
+    lightbox.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+
+    // Foca no botão de fechar (acessibilidade / ESC)
+    document.getElementById('lightboxClose').focus();
+  }
+
+  /**
+   * Fecha o lightbox e limpa a imagem.
+   * Libera o scroll da página.
+   */
+  function closeLightbox() {
+    const lightbox = document.getElementById('lightbox');
+    lightbox.classList.add('hidden');
+    document.getElementById('lightboxImg').src = '';
+    document.body.style.overflow = '';
+  }
+
+
+  // ─────────────────────────────────────────────
+  // API PÚBLICA
+  // ─────────────────────────────────────────────
+  return {
+    activateTab,
+    openModal,
+    closeModal,
+    showToast,
+    openLightbox,
+    closeLightbox,
+  };
+
+})();
+/**
+ * ╔══════════════════════════════════════════════════════════════╗
+ * ║  app.js — Ponto de Entrada da Aplicação                     ║
+ * ║                                                              ║
+ * ║  Este é o "maestro" da aplicação.                            ║
+ * ║  Responsável por:                                            ║
+ * ║    1. Inicializar todos os módulos ao carregar a página      ║
+ * ║    2. Registrar TODOS os event listeners                     ║
+ * ║    3. Conectar os módulos entre si (storage ↔ ui ↔ posts)   ║
+ * ║                                                              ║
+ * ║  REGRA: app.js NÃO contém lógica de negócio.                ║
+ * ║  Ele apenas chama métodos dos outros módulos.                ║
+ * ║                                                              ║
+ * ║  Ordem de carregamento obrigatória:                          ║
+ * ║    storage.js → profile.js → posts.js → ui.js → app.js      ║
+ * ╚══════════════════════════════════════════════════════════════╝
+ */
+
+/**
+ * Aguarda o DOM estar completamente carregado antes de inicializar.
+ * Garante que todos os elementos existam quando tentamos acessá-los.
+ */
+document.addEventListener('DOMContentLoaded', () => {
+
+  // ═══════════════════════════════════════════
+  // 1. INICIALIZAÇÃO
+  //    Carrega dados do localStorage e renderiza
+  //    o estado inicial da aplicação.
+  // ═══════════════════════════════════════════
+
+  // Carrega perfil (nome, bio, avatar, banner) e sincroniza a UI
+  Profile.syncUI();
+
+  // Renderiza os posts salvos no feed
+  Posts.renderFeed();
+
+  // Calcula e exibe as estatísticas iniciais
+  Posts.updateStats();
+
+
+  // ═══════════════════════════════════════════
+  // 2. NAVEGAÇÃO ENTRE ABAS
+  //    Ouve cliques em TODOS os elementos com data-tab,
+  //    tanto na rail lateral quanto na bottom-bar mobile.
+  // ═══════════════════════════════════════════
+
+  /**
+   * Delegação de eventos para navegação.
+   * Qualquer clique em um elemento com [data-tab] ativa aquela aba.
+   * Cobre: .rail-btn (desktop) e .bottom-btn (mobile).
+   */
+  document.querySelectorAll('[data-tab]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      UI.activateTab(btn.dataset.tab);
+    });
+
+    // Suporte a teclado: Enter e Espaço ativam o botão
+    btn.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        UI.activateTab(btn.dataset.tab);
+      }
+    });
+  });
+
+  // O avatar do compose também navega para a aba de perfil
+  document.getElementById('composeAva').addEventListener('click', () => {
+    UI.activateTab('profile');
+  });
+
+
+  // ═══════════════════════════════════════════
+  // 3. COMPOSE BOX — CRIAR POST
+  // ═══════════════════════════════════════════
+
+  const postInput  = document.getElementById('postInput');
+  const btnPost    = document.getElementById('btnPost');
+
+  /**
+   * Ao digitar na textarea:
+   *   - Atualiza o contador de caracteres
+   *   - Habilita/desabilita o botão "Publicar"
+   *     (só habilitado quando há texto não-vazio)
+   */
+  postInput.addEventListener('input', () => {
+    Posts.updateCharCounter('charCount', postInput, 500);
+    btnPost.disabled = postInput.value.trim().length === 0;
+  });
+
+  /**
+   * Atalho de teclado: Ctrl+Enter ou Cmd+Enter publica o post.
+   * Mais fluido do que ter que usar o mouse.
+   */
+  postInput.addEventListener('keydown', e => {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+      e.preventDefault();
+      if (!btnPost.disabled) {
+        Posts.handlePublish();
+      }
+    }
+  });
+
+  /** Clique no botão "Publicar" */
+  btnPost.addEventListener('click', () => {
+    Posts.handlePublish();
+  });
+
+
+  // ═══════════════════════════════════════════
+  // 4. UPLOAD DE IMAGEM NO COMPOSE
+  // ═══════════════════════════════════════════
+
+  /**
+   * Quando o usuário seleciona um arquivo via <input id="imgInput">,
+   * passa o arquivo para Posts.handleComposeImage() que o converte
+   * para Base64 e exibe a prévia.
+   */
+  document.getElementById('imgInput').addEventListener('change', e => {
+    const file = e.target.files[0];
+    if (file) Posts.handleComposeImage(file);
+  });
+
+  /**
+   * Botão ✕ remove a imagem selecionada do compose.
+   * Limpa a prévia e a variável interna _pendingImageUrl.
+   */
+  document.getElementById('removeImgBtn').addEventListener('click', () => {
+    Posts.clearPendingImage();
+  });
+
+
+  // ═══════════════════════════════════════════
+  // 5. MODAL DE EDIÇÃO DE POST
+  // ═══════════════════════════════════════════
+
+  const editTa = document.getElementById('editTa');
+
+  /**
+   * Atualiza o contador de caracteres do textarea do modal
+   * enquanto o usuário edita o texto.
+   */
+  editTa.addEventListener('input', () => {
+    Posts.updateCharCounter('editCount', editTa, 500);
+  });
+
+  /** Botão "Salvar" do modal: salva a edição */
+  document.getElementById('modalSaveBtn').addEventListener('click', () => {
+    Posts.handleSaveEdit();
+  });
+
+  /**
+   * Atalho Ctrl+Enter / Cmd+Enter também salva no modal
+   * (mesma UX do compose box).
+   */
+  editTa.addEventListener('keydown', e => {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+      e.preventDefault();
+      Posts.handleSaveEdit();
+    }
+  });
+
+  /** Botão "Cancelar" do modal */
+  document.getElementById('modalCancelBtn').addEventListener('click', () => {
+    UI.closeModal();
+  });
+
+  /** Botão ✕ (fechar) do modal */
+  document.getElementById('modalCloseBtn').addEventListener('click', () => {
+    UI.closeModal();
+  });
+
+  /**
+   * Clique no backdrop (fundo escuro) fecha o modal.
+   * Verifica se o clique foi no próprio backdrop
+   * (não em um filho, como o card do modal).
+   */
+  document.getElementById('modalBackdrop').addEventListener('click', e => {
+    if (e.target === document.getElementById('modalBackdrop')) {
+      UI.closeModal();
+    }
+  });
+
+  /**
+   * Tecla ESC fecha o modal (padrão de UX para modais).
+   * Também fecha o lightbox se estiver aberto.
+   */
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') {
+      UI.closeModal();
+      UI.closeLightbox();
+    }
+  });
+
+
+  // ═══════════════════════════════════════════
+  // 6. LIGHTBOX DE IMAGEM
+  // ═══════════════════════════════════════════
+
+  /** Botão ✕ do lightbox */
+  document.getElementById('lightboxClose').addEventListener('click', () => {
+    UI.closeLightbox();
+  });
+
+  /**
+   * Clique no fundo do lightbox (fora da imagem) também fecha.
+   * Verifica se o clique foi no container, não na imagem.
+   */
+  document.getElementById('lightbox').addEventListener('click', e => {
+    if (e.target === document.getElementById('lightbox')) {
+      UI.closeLightbox();
+    }
+  });
+
+
+  // ═══════════════════════════════════════════
+  // 7. PERFIL — FORMULÁRIO DE EDIÇÃO
+  // ═══════════════════════════════════════════
+
+  /** Botão "Editar perfil": abre o formulário */
+  document.getElementById('btnEditP').addEventListener('click', () => {
+    Profile.openEditForm();
+  });
+
+  /** Botão "Cancelar" do formulário de edição */
+  document.getElementById('btnCancelEdit').addEventListener('click', () => {
+    Profile.closeEditForm();
+  });
+
+  /** Botão "Salvar" do formulário de edição */
+  document.getElementById('btnSaveEdit').addEventListener('click', () => {
+    Profile.saveEditForm();
+  });
+
+  /**
+   * Enter no campo de nome salva o formulário (UX de formulário padrão).
+   * Tab passa para o próximo campo normalmente.
+   */
+  document.getElementById('eName').addEventListener('keydown', e => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      Profile.saveEditForm();
+    }
+  });
+
+
+  // ═══════════════════════════════════════════
+  // 8. PERFIL — UPLOAD DE AVATAR
+  // ═══════════════════════════════════════════
+
+  /**
+   * Clique na foto de perfil grande abre o seletor de arquivo do avatar.
+   * O input file real está dentro do .avatar-wrap (oculto via CSS).
+   */
+  document.getElementById('profileAvaBig').addEventListener('click', () => {
+    document.getElementById('avatarInput').click();
+  });
+
+  /** Tecla Enter/Espaço no avatar também abre o seletor (acessibilidade) */
+  document.getElementById('profileAvaBig').addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      document.getElementById('avatarInput').click();
+    }
+  });
+
+  /**
+   * Quando o usuário seleciona um arquivo para avatar,
+   * Profile.handleImageUpload converte para Base64 e salva.
+   */
+  document.getElementById('avatarInput').addEventListener('change', e => {
+    const file = e.target.files[0];
+    if (file) Profile.handleImageUpload(file, 'avatar');
+    e.target.value = ''; // reseta para permitir selecionar o mesmo arquivo
+  });
+
+
+  // ═══════════════════════════════════════════
+  // 9. PERFIL — UPLOAD DE BANNER
+  // ═══════════════════════════════════════════
+
+  /**
+   * Clique na zona do banner abre o seletor de arquivo do banner.
+   * A zona inclui tanto a imagem quanto o overlay de hint.
+   */
+  document.getElementById('bannerZone').addEventListener('click', e => {
+    // Evita abrir o seletor se o clique foi diretamente no input
+    if (e.target.tagName !== 'INPUT') {
+      document.getElementById('bannerInput').click();
+    }
+  });
+
+  /** Tecla Enter/Espaço no banner abre o seletor (acessibilidade) */
+  document.getElementById('bannerZone').addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      document.getElementById('bannerInput').click();
+    }
+  });
+
+  /**
+   * Quando o usuário seleciona um arquivo para banner,
+   * Profile.handleImageUpload converte para Base64 e salva.
+   */
+  document.getElementById('bannerInput').addEventListener('change', e => {
+    const file = e.target.files[0];
+    if (file) Profile.handleImageUpload(file, 'banner');
+    e.target.value = ''; // reseta para reusar
+  });
+
+  /**
+   * BÔNUS: Drag & Drop no banner.
+   * Permite arrastar uma imagem direto para a zona do banner.
+   */
+  const bannerZone = document.getElementById('bannerZone');
+
+  bannerZone.addEventListener('dragover', e => {
+    e.preventDefault(); // necessário para ativar o drop
+    bannerZone.classList.add('drag-over');
+  });
+
+  bannerZone.addEventListener('dragleave', () => {
+    bannerZone.classList.remove('drag-over');
+  });
+
+  bannerZone.addEventListener('drop', e => {
+    e.preventDefault();
+    bannerZone.classList.remove('drag-over');
+    const file = e.dataTransfer.files[0];
+    if (file && file.type.startsWith('image/')) {
+      Profile.handleImageUpload(file, 'banner');
+    } else if (file) {
+      UI.showToast('Por favor, solte apenas imagens.', 'err');
+    }
+  });
+
+
+}); // fim do DOMContentLoaded
+</script>
+</body></html>

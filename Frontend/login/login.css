@@ -1,90 +1,138 @@
-/* RESET */
+/* 1. RESET E VARIÁVEIS DO FEED */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Segoe UI', sans-serif;
+    font-family: 'Segoe UI', system-ui, sans-serif;
 }
 
-/* BODY */
+:root {
+    --bg-feed: #f8f7f5;          /* Cor de fundo do seu feed */
+    --card-white: #ffffff;       /* Fundo dos posts */
+    --accent-blue: #a5b4fc;      /* Azul do seu botão 'Publicar' */
+    --accent-hover: #818cf8;     /* Azul um pouco mais escuro para o hover */
+    --ink: #333333;              /* Texto principal */
+    --ink-light: #888888;        /* Texto secundário/placeholder */
+    --danger: #ff4d4d;           /* Cor de erro */
+    --shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+
+/* 2. BODY - Ajustado para o fundo claro do Feed */
 .login-page {
     height: 100vh;
-    background: linear-gradient(135deg, #1e1e2f, #000000);
+    background-color: var(--bg-feed);
     display: flex;
     justify-content: center;
     align-items: center;
+    padding: 20px;
 }
-/* CONTAINER */
+
+/* 3. CONTAINER - Agora branco com bordas arredondadas (igual ao post do cachorro) */
 .login-container {
     width: 100%;
     max-width: 400px;
-    background: #2e2e42;
-    padding: 30px;
-    border-radius: 16px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    background: var(--card-white);
+    padding: 40px;
+    border-radius: 25px; /* Bordas bem arredondadas como no seu feed */
+    box-shadow: var(--shadow);
     text-align: center;
 }
 
-/* TITULOS */
+/* 4. TÍTULOS - Cores escuras para contraste no fundo branco */
 .login-container h1 {
-    color: #fff;
-    margin-bottom: 10px;
+    color: var(--ink);
+    font-size: 1.8rem;
+    margin-bottom: 8px;
+    font-weight: 700;
 }
 
 .login-container h2 {
-    color: #aaa;
-    margin-bottom: 20px;
+    color: var(--ink-light);
+    font-size: 1rem;
+    margin-bottom: 30px;
+    font-weight: 400;
 }
 
-/* FORM */
+/* 5. FORM */
 form {
     display: flex;
     flex-direction: column;
     gap: 15px;
 }
 
-/* INPUTS */
+/* 6. INPUTS - Estilo moderno e clean */
 input {
-    padding: 12px;
-    border-radius: 8px;
-    border: none;
+    padding: 14px 18px;
+    border-radius: 12px;
+    border: 1px solid #eeeeee;
+    background: #fafafa;
+    color: var(--ink);
+    font-size: 15px;
+    transition: all 0.3s ease;
     outline: none;
-    background: #1e1e2f;
-    color: white;
-    font-size: 14px;
 }
 
-/* BOTAO */
+input:focus {
+    border-color: var(--accent-blue);
+    background: #ffffff;
+    box-shadow: 0 0 0 4px rgba(165, 180, 252, 0.1);
+}
+
+input::placeholder {
+    color: #ccc;
+}
+
+/* 7. BOTAO - Estilo "Pílula" igual ao botão 'Publicar' */
 .submit-button {
-    padding: 12px;
+    margin-top: 10px;
+    padding: 14px;
     border: none;
-    border-radius: 8px;
-    background: #000000;
+    border-radius: 50px; /* Formato de pílula */
+    background: var(--accent-blue);
     color: white;
-    font-weight: bold;
+    font-size: 16px;
+    font-weight: 600;
     cursor: pointer;
-    transition: 0.3s;
+    transition: all 0.3s ease;
 }
 
 .submit-button:hover {
-    background: #000000;
+    background: var(--accent-hover);
+    transform: translateY(-1px);
 }
 
-/* ERRO */
+.submit-button:active {
+    transform: translateY(0);
+}
+
+/* 8. ERRO */
 .error-message {
-    color: #ff4d4d;
+    color: var(--danger);
+    font-size: 0.85rem;
+    margin-top: 5px;
+    min-height: 1.2rem;
+}
+
+/* 9. LINKS - Padronizado com o Azul do tema */
+p {
+    margin-top: 20px;
+    color: var(--ink-light);
     font-size: 0.9rem;
 }
 
-/* LINKS */
 a {
-    color: #ff7a18;
+    color: var(--accent-blue);
+    text-decoration: none;
+    font-weight: 600;
 }
 
-/* RESPONSIVO */
-@media (min-width: 768px) {
+a:hover {
+    text-decoration: underline;
+}
+
+/* 10. RESPONSIVO */
+@media (max-width: 480px) {
     .login-container {
-        max-width: 450px;
-        padding: 40px;
+        padding: 30px 20px;
     }
 }
