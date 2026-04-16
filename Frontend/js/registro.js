@@ -48,7 +48,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // 3. Redireciona para o login
         setTimeout(() => {
             mensagemSucesso.style.display = 'none';
-            window.location.href = 'index.html'; 
+            window.location.href = 'login.html'; 
         }, 1500);
     });
 });

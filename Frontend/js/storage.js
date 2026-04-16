@@ -148,8 +148,8 @@ const Storage = (() => {
    * @type {ProfileObject}
    */
   const DEFAULT_PROFILE = {
-    name:        'João da Silva',
-    bio:         'Apaixonado por aprender. Sempre estudando algo novo a cada dia.',
+    name:        'Usuário Anônimo',
+    bio:         'Esta é a minha bio. Edite-a para se apresentar ao mundo!',
     avatarUrl:   null,   // Data URL da foto de perfil
     bannerUrl:   null,   // Data URL do banner
   };
